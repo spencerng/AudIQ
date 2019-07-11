@@ -12,22 +12,24 @@ public class MainMenuScript : MonoBehaviour
     {
 
         Debug.Log("Main menu script working!");
-        Button speechInNoiseButton = gameObject.GetComponent("SpeechInNoiseButton") as Button;
+        Button speechInNoiseButton = GameObject.Find("SpeechInNoiseButton").GetComponent<Button>();
+        
         speechInNoiseButton.onClick.AddListener(() => SwitchScene(1));
 
     }
 
     void SwitchScene(int gameNum)
     {
+        Debug.Log("Button clicked");
         if (gameNum == 1)
         {
-            SceneManager.LoadScene("SpeechInNoiseGame", LoadSceneMode.Additive);
+            SceneManager.LoadScene("SpeechInNoiseGame", LoadSceneMode.Single);
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("Main menu script working!");
+        
     }
 }
