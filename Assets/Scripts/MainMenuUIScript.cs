@@ -21,4 +21,20 @@ public class MainMenuUIScript : MonoBehaviour
 
         SceneManager.LoadScene("PitchDiscriminationGame");
     }
+
+    public void Start()
+    {
+        if (Application.platform == RuntimePlatform.Android)
+        {
+            if (Input.GetKey(KeyCode.Escape))
+            {
+                SceneManager.LoadScene("MainMenu");
+
+
+                return;
+            }
+
+        }
+    }
 }
+
