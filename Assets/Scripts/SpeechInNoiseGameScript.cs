@@ -4,27 +4,22 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-/*
- * TO DO:
- * 1) make the sounds play individually, not all at once
- * 2) Fix the index error that comes up after a few trials
- * 3) Defensive programming measures, one example would be to not count button presses after 12 (also note that this would glitch after 12 anyways bc array doesn't have an index)
- * */
-
 public class SpeechInNoiseGameScript : MonoBehaviour
 {
     public int numCorrect, numWrong, percentCorrect, numtrial;
     public bool isClicked;
 
+    
     public Button[] wordButtons = new Button[12];
     public AudioObj[] audioObjs = new AudioObj[12]; //One object has audioSource, audioClip, correctAnswer, and bool correctlyAnswered
-
+    
 
     // Start is called before the first frame update
     void Start()
     {
-        isClicked = false;
 
+
+        isClicked = false;
         numtrial = 1; //initialized here because doing it before the first method glitched, was set to 0
 
         //Array of buttons
@@ -42,15 +37,29 @@ public class SpeechInNoiseGameScript : MonoBehaviour
             audioObjs[i] = a1;
         }
 
+        
         //just testing 
         SetButtonListeners();
         StartTrial(numtrial);
 
         //What I want to do: Start trial, assign buttons, read prompt, wait for user button press, then start new trial
         
+
+
+    
+
     }
 
-
+    
+    void SetButtonListeners()
+    {
+        for (int i = 0; i < 12; i++)
+        {
+            int buttonNum = i;
+            //Add listener here?
+            wordButtons[i].onClick.AddListener(() => OnSpeechButtonClick(buttonNum));
+        }
+    }
 
     void StartTrial(int trial_number)
     {
@@ -105,40 +114,6 @@ public class SpeechInNoiseGameScript : MonoBehaviour
 
     }
 
-    void SetButtonListeners()
-    {
-        for (int i = 0; i < 12; i++)
-        {
-            int buttonNum = i;
-            //Add listener here?
-            wordButtons[i].onClick.AddListener(() => OnSpeechButtonClick(buttonNum));
-        }
-    }
-
-    void OnSpeechButtonClick(int buttonNum)
-    {
-        isClicked = true;
-
-        int index_for_numtrial = numtrial - 1;
-        //Should probably add conditional as a defensive programming measure -- if people do the 12 trials and press another button, shouldn't count it
-       
-        if (wordButtons[buttonNum].GetComponentInChildren<Text>().text == audioObjs[index_for_numtrial].GetCorrectAnswer())
-        {
-            audioObjs[index_for_numtrial].AnsweredCorrectly();
-        } else
-        {
-            audioObjs[index_for_numtrial].DidNotAnswerCorrectly();
-        }
-
-        numtrial++;
-
-        if(numtrial <= audioObjs.Length)
-        {
-            StartTrial(numtrial);
-        }
-        
-    }
-
     private string[] GetButtonOptions()
     {
         //string[] buttonoptions = new string[12];
@@ -164,6 +139,36 @@ public class SpeechInNoiseGameScript : MonoBehaviour
         }
 
         return list;
+    }
+
+    void OnSpeechButtonClick(int buttonNum)
+    {
+        isClicked = true;
+
+        int index_for_numtrial = numtrial - 1;
+        //Should probably add conditional as a defensive programming measure -- if people do the 12 trials and press another button, shouldn't count it
+
+        if (numtrial <= audioObjs.Length)
+        {
+            if (wordButtons[buttonNum].GetComponentInChildren<Text>().text == audioObjs[index_for_numtrial].GetCorrectAnswer())
+            {
+                audioObjs[index_for_numtrial].AnsweredCorrectly();
+                //play correct animation
+            }
+            else
+            {
+                audioObjs[index_for_numtrial].DidNotAnswerCorrectly();
+                //play incorrect animation
+            }
+        }
+
+        numtrial++;
+
+        if (numtrial <= audioObjs.Length)
+        {
+            StartTrial(numtrial);
+        }
+        
     }
 
     // Update is called once per frame
