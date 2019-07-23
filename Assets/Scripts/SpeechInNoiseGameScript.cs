@@ -47,6 +47,8 @@ public class SpeechInNoiseGameScript : MonoBehaviour
         }
         
         SetButtonListeners();
+        AssignButtonOptions();
+
         StartCoroutine(StartTrial(numtrial));
     }
 
