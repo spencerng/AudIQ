@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]  // Save and store information (?)
+//[System.Serializable]  // Save and store information (?); LED TO INDEX ERROR
 
 public class AudioObj 
 {
