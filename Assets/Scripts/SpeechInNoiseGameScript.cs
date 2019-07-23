@@ -9,17 +9,25 @@ public class SpeechInNoiseGameScript : MonoBehaviour
     public int numCorrect, numWrong, percentCorrect, numtrial;
     public bool isClicked;
 
-    
+    public Text CorrectIncorrectText;
+    public CanvasGroup CorrectIncorrectTextCg;
+    public Image CorrectIncorrectPanel;
+    public CanvasGroup CorrectIncorrectPanelCg;
+
     public Button[] wordButtons = new Button[12];
     public AudioObj[] audioObjs = new AudioObj[12]; //One object has audioSource, audioClip, correctAnswer, and bool correctlyAnswered
-    
+
+    public AudioObj readyFile;
 
     // Start is called before the first frame update
     void Start()
     {
+        CorrectIncorrectText = GameObject.Find("CorrectIncorrectText").GetComponent<Text>();
+        CorrectIncorrectTextCg = GameObject.Find("CorrectIncorrectText").GetComponent<CanvasGroup>();
 
+        CorrectIncorrectPanel = GameObject.Find("CorrectIncorrectPanel").GetComponent<Image>();
+        CorrectIncorrectPanelCg = GameObject.Find("CorrectIncorrectPanel").GetComponent<CanvasGroup>();
 
-        isClicked = false;
         numtrial = 1; //initialized here because doing it before the first method glitched, was set to 0
 
         //Array of buttons
@@ -28,26 +36,18 @@ public class SpeechInNoiseGameScript : MonoBehaviour
             wordButtons[i] = GameObject.Find("SpeechGameButton" + (i + 1)).GetComponent<Button>(); //initializes button array
             //moved adding listeners to AssignButtonOptions()
         }
+        
+        AudioSource[] audioSources = GetComponents<AudioSource>(); //Note this will be 13; first index of 0 is "ready"
+        readyFile = new AudioObj(audioSources[0]);
 
-        AudioSource[] audioSources = GetComponents<AudioSource>();
-
-        for (int i = 0; i < audioSources.Length; i++)
+        for (int i = 1; i < audioSources.Length; i++)
         {
             AudioObj a1 = new AudioObj(audioSources[i]);
-            audioObjs[i] = a1;
+            audioObjs[i - 1] = a1;
         }
-
         
-        //just testing 
         SetButtonListeners();
-        StartTrial(numtrial);
-
-        //What I want to do: Start trial, assign buttons, read prompt, wait for user button press, then start new trial
-        
-
-
-    
-
+        StartCoroutine(StartTrial(numtrial));
     }
 
     
@@ -61,16 +61,21 @@ public class SpeechInNoiseGameScript : MonoBehaviour
         }
     }
 
-    void StartTrial(int trial_number)
+    public IEnumerator StartTrial(int trial_number)
     {
+        //Initial pause to allow the Correct/Incorrect flash to finish
+        yield return new WaitForSeconds(0.7f);
+
         RetrieveCorrectAnswers();
         AssignButtonOptions();
-        //play prompt, ready or something
+
+        readyFile.GetAudioSource().PlayOneShot(readyFile.GetAudioClip());
+        yield return new WaitForSeconds(1f);
+
         audioObjs[trial_number - 1].GetAudioSource().PlayOneShot(audioObjs[trial_number - 1].GetAudioClip()); //plays clip, trial 1 corresponds to index 0
 
+        yield return new WaitForSeconds(1f);
     }
-
-
 
     void RetrieveCorrectAnswers()
     {
@@ -154,11 +159,15 @@ public class SpeechInNoiseGameScript : MonoBehaviour
             {
                 audioObjs[index_for_numtrial].AnsweredCorrectly();
                 //play correct animation
+                StartCoroutine(FlashCorrectScreen(CorrectIncorrectTextCg, CorrectIncorrectPanelCg, CorrectIncorrectPanel, CorrectIncorrectText));
+
             }
             else
             {
                 audioObjs[index_for_numtrial].DidNotAnswerCorrectly();
                 //play incorrect animation
+                StartCoroutine(FlashInCorrectScreen(CorrectIncorrectTextCg, CorrectIncorrectPanelCg, CorrectIncorrectPanel, CorrectIncorrectText));
+
             }
         }
 
@@ -166,9 +175,59 @@ public class SpeechInNoiseGameScript : MonoBehaviour
 
         if (numtrial <= audioObjs.Length)
         {
-            StartTrial(numtrial);
+            StartCoroutine(StartTrial(numtrial));
         }
         
+    }
+
+    public IEnumerator FlashCorrectScreen(CanvasGroup text_cg, CanvasGroup panel_cg, Image panel, Text text, float timeBetweenFlash = 0.5f, float timeToWait = 0.75f)
+    {
+        bool changed = false;
+        for (int i = 0; i < 2; i++)
+        {
+            if (!changed)
+            {
+                text.text = "Correct!";
+                text_cg.alpha = 1;
+
+                panel.color = UnityEngine.Color.green;
+                panel_cg.alpha = 0.75f;
+
+                changed = true;
+            }
+            else
+            {
+                text_cg.alpha = 0;
+                panel_cg.alpha = 0;
+            }
+            yield return new WaitForSeconds(timeBetweenFlash);
+        }
+        yield return new WaitForSeconds(timeToWait);
+    }
+
+    public IEnumerator FlashInCorrectScreen(CanvasGroup text_cg, CanvasGroup panel_cg, Image panel, Text text, float timeBetweenFlash = 0.5f, float timeToWait = 0.75f)
+    {
+        bool changed = false;
+        for (int i = 0; i < 2; i++)
+        {
+            if (!changed)
+            {
+                text.text = "Wrong!";
+                text_cg.alpha = 1;
+
+                panel.color = UnityEngine.Color.red;
+                panel_cg.alpha = 0.75f;
+
+                changed = true;
+            }
+            else
+            {
+                text_cg.alpha = 0;
+                panel_cg.alpha = 0;
+            }
+            yield return new WaitForSeconds(timeBetweenFlash);
+        }
+        yield return new WaitForSeconds(timeToWait);
     }
 
     // Update is called once per frame
@@ -190,3 +249,9 @@ public class SpeechInNoiseGameScript : MonoBehaviour
         }
     }
 }
+
+/*
+ * Added the flash correct/incorrect methods
+ * made the start trial a coroutine 
+ * 
+ * */
