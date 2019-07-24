@@ -46,13 +46,29 @@ public class SpeechInNoiseGameScript : MonoBehaviour
             audioObjs[i - 1] = new AudioObj(audioSources[i]);
         }
         
-        SetButtonListeners();
-        AssignButtonOptions();
+        AssignButtonOptions(); //Just so that s1, s2, etc. doesn't appear on the screen
 
         StartCoroutine(StartTrial(numTrial));
+
     }
 
-    
+    public IEnumerator StartTrial(int trialNum)
+    {
+        //Initial pause to allow the Correct/Incorrect flash to finish
+        yield return new WaitForSeconds(0.7f);
+
+        AssignButtonOptions();
+        RetrieveCorrectAnswers();
+
+        readyFile.GetAudioSource().PlayOneShot(readyFile.GetAudioClip());
+        yield return new WaitForSeconds(1f);
+
+        audioObjs[trialNum - 1].GetAudioSource().PlayOneShot(audioObjs[trialNum - 1].GetAudioClip()); //plays clip, trial 1 corresponds to index 0
+        SetButtonListeners(); //Set/remove new listeners every trial to prevent registering accidental double taps
+
+        yield return new WaitForSeconds(1f);
+    }
+
     void SetButtonListeners()
     {
         for (int i = 0; i < 12; i++)
@@ -61,22 +77,6 @@ public class SpeechInNoiseGameScript : MonoBehaviour
             //Add listener here?
             wordButtons[i].onClick.AddListener(() => OnSpeechButtonClick(buttonNum));
         }
-    }
-
-    public IEnumerator StartTrial(int trialNum)
-    {
-        //Initial pause to allow the Correct/Incorrect flash to finish
-        yield return new WaitForSeconds(0.7f);
-
-        RetrieveCorrectAnswers();
-        AssignButtonOptions();
-
-        readyFile.GetAudioSource().PlayOneShot(readyFile.GetAudioClip());
-        yield return new WaitForSeconds(1f);
-
-        audioObjs[trialNum - 1].GetAudioSource().PlayOneShot(audioObjs[trialNum - 1].GetAudioClip()); //plays clip, trial 1 corresponds to index 0
-
-        yield return new WaitForSeconds(1f);
     }
 
     void RetrieveCorrectAnswers()
@@ -150,6 +150,8 @@ public class SpeechInNoiseGameScript : MonoBehaviour
 
     void OnSpeechButtonClick(int buttonNum)
     {
+        RemoveListeners();
+
         isClicked = true;
 
         int index_for_numtrial = numTrial - 1;
@@ -174,6 +176,7 @@ public class SpeechInNoiseGameScript : MonoBehaviour
         }
 
         numTrial++;
+
 
         if (numTrial <= audioObjs.Length)
         {
@@ -230,6 +233,14 @@ public class SpeechInNoiseGameScript : MonoBehaviour
             yield return new WaitForSeconds(timeBetweenFlash);
         }
         yield return new WaitForSeconds(timeToWait);
+    }
+
+    void RemoveListeners()
+    {
+        for (int i = 0; i < 12; i++)
+        {
+            wordButtons[i].onClick.RemoveAllListeners();
+        }
     }
 
     // Update is called once per frame
