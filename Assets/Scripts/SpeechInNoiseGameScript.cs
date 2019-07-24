@@ -6,29 +6,30 @@ using UnityEngine.SceneManagement;
 
 public class SpeechInNoiseGameScript : MonoBehaviour
 {
-    public int numCorrect, numWrong, percentCorrect, numtrial;
+    public int numCorrect, numWrong, percentCorrect, numTrial;
     public bool isClicked;
 
-    public Text CorrectIncorrectText;
-    public CanvasGroup CorrectIncorrectTextCg;
-    public Image CorrectIncorrectPanel;
-    public CanvasGroup CorrectIncorrectPanelCg;
+    public Text correctIncorrectText;
+    public CanvasGroup correctIncorrectTextCg;
+    public Image correctIncorrectPanel;
+    public CanvasGroup correctIncorrectPanelCg;
 
     public Button[] wordButtons = new Button[12];
-    public AudioObj[] audioObjs = new AudioObj[12]; //One object has audioSource, audioClip, correctAnswer, and bool correctlyAnswered
+    //One object has audioSource, audioClip, correctAnswer, and bool correctlyAnswered
+    public AudioObj[] audioObjs = new AudioObj[12]; 
 
     public AudioObj readyFile;
 
     // Start is called before the first frame update
     void Start()
     {
-        CorrectIncorrectText = GameObject.Find("CorrectIncorrectText").GetComponent<Text>();
-        CorrectIncorrectTextCg = GameObject.Find("CorrectIncorrectText").GetComponent<CanvasGroup>();
+        correctIncorrectText = GameObject.Find("CorrectIncorrectText").GetComponent<Text>();
+        correctIncorrectTextCg = GameObject.Find("CorrectIncorrectText").GetComponent<CanvasGroup>();
 
-        CorrectIncorrectPanel = GameObject.Find("CorrectIncorrectPanel").GetComponent<Image>();
-        CorrectIncorrectPanelCg = GameObject.Find("CorrectIncorrectPanel").GetComponent<CanvasGroup>();
+        correctIncorrectPanel = GameObject.Find("CorrectIncorrectPanel").GetComponent<Image>();
+        correctIncorrectPanelCg = GameObject.Find("CorrectIncorrectPanel").GetComponent<CanvasGroup>();
 
-        numtrial = 1; //initialized here because doing it before the first method glitched, was set to 0
+        numTrial = 1; //initialized here because doing it before the first method glitched, was set to 0
 
         //Array of buttons
         for (int i = 0; i < 12; i++)
@@ -42,14 +43,13 @@ public class SpeechInNoiseGameScript : MonoBehaviour
 
         for (int i = 1; i < audioSources.Length; i++)
         {
-            AudioObj a1 = new AudioObj(audioSources[i]);
-            audioObjs[i - 1] = a1;
+            audioObjs[i - 1] = new AudioObj(audioSources[i]);
         }
         
         SetButtonListeners();
         AssignButtonOptions();
 
-        StartCoroutine(StartTrial(numtrial));
+        StartCoroutine(StartTrial(numTrial));
     }
 
     
@@ -63,7 +63,7 @@ public class SpeechInNoiseGameScript : MonoBehaviour
         }
     }
 
-    public IEnumerator StartTrial(int trial_number)
+    public IEnumerator StartTrial(int trialNum)
     {
         //Initial pause to allow the Correct/Incorrect flash to finish
         yield return new WaitForSeconds(0.7f);
@@ -74,7 +74,7 @@ public class SpeechInNoiseGameScript : MonoBehaviour
         readyFile.GetAudioSource().PlayOneShot(readyFile.GetAudioClip());
         yield return new WaitForSeconds(1f);
 
-        audioObjs[trial_number - 1].GetAudioSource().PlayOneShot(audioObjs[trial_number - 1].GetAudioClip()); //plays clip, trial 1 corresponds to index 0
+        audioObjs[trialNum - 1].GetAudioSource().PlayOneShot(audioObjs[trialNum - 1].GetAudioClip()); //plays clip, trial 1 corresponds to index 0
 
         yield return new WaitForSeconds(1f);
     }
@@ -123,7 +123,7 @@ public class SpeechInNoiseGameScript : MonoBehaviour
 
     private string[] GetButtonOptions()
     {
-        //string[] buttonoptions = new string[12];
+
 
         //temporararily did this, we'll have to actually retrieve text from buttons later
         string[] buttonOptions = { "beach", "boot", "touch", "boat", "juice", "bought", "food", "goose", "noise", "cheese", "what", "choose" };
@@ -152,32 +152,32 @@ public class SpeechInNoiseGameScript : MonoBehaviour
     {
         isClicked = true;
 
-        int index_for_numtrial = numtrial - 1;
+        int index_for_numtrial = numTrial - 1;
         //Should probably add conditional as a defensive programming measure -- if people do the 12 trials and press another button, shouldn't count it
 
-        if (numtrial <= audioObjs.Length)
+        if (numTrial <= audioObjs.Length)
         {
             if (wordButtons[buttonNum].GetComponentInChildren<Text>().text == audioObjs[index_for_numtrial].GetCorrectAnswer())
             {
                 audioObjs[index_for_numtrial].AnsweredCorrectly();
                 //play correct animation
-                StartCoroutine(FlashCorrectScreen(CorrectIncorrectTextCg, CorrectIncorrectPanelCg, CorrectIncorrectPanel, CorrectIncorrectText));
+                StartCoroutine(FlashCorrectScreen(correctIncorrectTextCg, correctIncorrectPanelCg, correctIncorrectPanel, correctIncorrectText));
 
             }
             else
             {
                 audioObjs[index_for_numtrial].DidNotAnswerCorrectly();
                 //play incorrect animation
-                StartCoroutine(FlashInCorrectScreen(CorrectIncorrectTextCg, CorrectIncorrectPanelCg, CorrectIncorrectPanel, CorrectIncorrectText));
+                StartCoroutine(FlashIncorrectScreen(correctIncorrectTextCg, correctIncorrectPanelCg, correctIncorrectPanel, correctIncorrectText));
 
             }
         }
 
-        numtrial++;
+        numTrial++;
 
-        if (numtrial <= audioObjs.Length)
+        if (numTrial <= audioObjs.Length)
         {
-            StartCoroutine(StartTrial(numtrial));
+            StartCoroutine(StartTrial(numTrial));
         }
         
     }
@@ -207,7 +207,7 @@ public class SpeechInNoiseGameScript : MonoBehaviour
         yield return new WaitForSeconds(timeToWait);
     }
 
-    public IEnumerator FlashInCorrectScreen(CanvasGroup text_cg, CanvasGroup panel_cg, Image panel, Text text, float timeBetweenFlash = 0.5f, float timeToWait = 0.75f)
+    public IEnumerator FlashIncorrectScreen(CanvasGroup text_cg, CanvasGroup panel_cg, Image panel, Text text, float timeBetweenFlash = 0.5f, float timeToWait = 0.75f)
     {
         bool changed = false;
         for (int i = 0; i < 2; i++)
@@ -235,11 +235,11 @@ public class SpeechInNoiseGameScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        AndroidBackButton();
+        AndroidBackButtonListener();
 
     }
 
-    void AndroidBackButton()
+    void AndroidBackButtonListener()
     {
         if (Application.platform == RuntimePlatform.Android)
         {

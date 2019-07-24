@@ -13,9 +13,9 @@ public class AudioObj
     private AudioClip audioClip;
     private bool correctlyAnswered;
 
-    public AudioObj(AudioSource input_source)
+    public AudioObj(AudioSource inputSource)
     {
-        audioSource = input_source;
+        audioSource = inputSource;
         audioClip = audioSource.clip;
     }
 
