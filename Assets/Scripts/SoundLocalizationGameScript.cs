@@ -17,7 +17,7 @@ public class SoundLocalizationGameScript : MonoBehaviour
     public Button buttonLeft;
     public Button buttonRight;
 
-    public AudioObj[] audioObjs = new AudioObj[12];
+    public AudioObj[] audioObjs = new AudioObj[2]; //for now we have two trials, CHANGE L8R
 
     public bool playLeftAnimation; //I just made booleans so that the Update frame plays animations, perhaps a better way is to play a method for a set # of seconds
     public bool playRightAnimation;
@@ -85,14 +85,6 @@ public class SoundLocalizationGameScript : MonoBehaviour
         yield return new WaitForSeconds(1f);
     }
 
-    /* 1. Play sound
-     * 2. Set Listener
-     * 3. On Click, register right/wrong; remove listener
-     * 4. Make chicky move & then move back
-     * 5. Display correct/incorrect.
-     * 6. Play next sound, and all over again
-     * */
-
     void RetrieveCorrectAnswers()
     {
         audioObjs[0].SetCorrectAnswer("left");
@@ -134,7 +126,7 @@ public class SoundLocalizationGameScript : MonoBehaviour
                 }
 
             }
-            else
+            else //if left_or_right == "right"
             {
                 originalChickyRightPosition = chickyRightTransform.position;
                 playRightAnimation = true;
