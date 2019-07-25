@@ -21,6 +21,18 @@ public class SoundLocalizationGameScript : MonoBehaviour
 
     public bool playLeftAnimation; //I just made booleans so that the Update frame plays animations, perhaps a better way is to play a method for a set # of seconds
     public bool playRightAnimation;
+    private bool playTopAnimation;
+
+    private Vector3 originalChickyTopPosition;
+    private Vector3 originalChickyLeftPosition;
+    private Vector3 originalChickyRightPosition;
+
+    private Text correctIncorrectText;
+    private CanvasGroup correctIncorrectTextCg;
+    private Image correctIncorrectPanel;
+    private CanvasGroup correctIncorrectPanelCg;
+
+    private int numTrial;
 
     // Start is called before the first frame update
     void Start()
@@ -36,12 +48,25 @@ public class SoundLocalizationGameScript : MonoBehaviour
         buttonLeft = GameObject.Find("Button_L").GetComponent<Button>(); //Note buttons are invisible
         buttonRight = GameObject.Find("Button_R").GetComponent<Button>();
 
-        AudioSource[] audioSources = GetComponents<AudioSource>(); //Note this will be 13; first index of 0 is "ready"
+        correctIncorrectText = GameObject.Find("CorrectIncorrectText").GetComponent<Text>();
+        correctIncorrectTextCg = GameObject.Find("CorrectIncorrectText").GetComponent<CanvasGroup>();
+
+        correctIncorrectPanel = GameObject.Find("CorrectIncorrectPanel").GetComponent<Image>();
+        correctIncorrectPanelCg = GameObject.Find("CorrectIncorrectPanel").GetComponent<CanvasGroup>();
+
+        AudioSource[] audioSources = GetComponents<AudioSource>();
 
         for (int i = 0; i < audioSources.Length; i++)
         {
             audioObjs[i] = new AudioObj(audioSources[i]);
         }
+
+        numTrial = 1;
+
+        originalChickyTopPosition = chickyTopTransform.position;
+        playTopAnimation = true; //just an initial animation
+
+        StartCoroutine(StartTrial(numTrial));
     }
 
     public IEnumerator StartTrial(int trialNum)
@@ -85,16 +110,56 @@ public class SoundLocalizationGameScript : MonoBehaviour
     {
         RemoveListeners();
 
-        if (left_or_right == "left")
-        {
-            playLeftAnimation = true;
-            //add in correct/incorrect animations
+        int indexForTrial = numTrial - 1;
 
-        } else
+        if (numTrial <= audioObjs.Length)
         {
-            playRightAnimation = true;
-            //add in correct/incorrect animations
 
+            if (left_or_right == "left")
+            {
+                originalChickyLeftPosition = chickyLeftTransform.position;
+                playLeftAnimation = true;
+
+                //add in correct/incorrect 
+                if (audioObjs[indexForTrial].GetCorrectAnswer() == left_or_right)
+                {
+                    audioObjs[indexForTrial].SetCorrectlyAnswered(true);
+                    StartCoroutine(FlashCorrectScreen(correctIncorrectTextCg, correctIncorrectPanelCg, correctIncorrectPanel, correctIncorrectText));
+                }
+                else
+                {
+                    audioObjs[indexForTrial].SetCorrectlyAnswered(false);
+                    //play incorrect animation
+                    StartCoroutine(FlashIncorrectScreen(correctIncorrectTextCg, correctIncorrectPanelCg, correctIncorrectPanel, correctIncorrectText));
+                }
+
+            }
+            else
+            {
+                originalChickyRightPosition = chickyRightTransform.position;
+                playRightAnimation = true;
+                //add in correct/incorrect animations
+                if (audioObjs[indexForTrial].GetCorrectAnswer() == left_or_right)
+                {
+                    audioObjs[indexForTrial].SetCorrectlyAnswered(true);
+                    StartCoroutine(FlashCorrectScreen(correctIncorrectTextCg, correctIncorrectPanelCg, correctIncorrectPanel, correctIncorrectText));
+                }
+                else
+                {
+                    audioObjs[indexForTrial].SetCorrectlyAnswered(false);
+                    //play incorrect animation
+                    StartCoroutine(FlashIncorrectScreen(correctIncorrectTextCg, correctIncorrectPanelCg, correctIncorrectPanel, correctIncorrectText));
+                }
+
+            }
+
+        }
+        numTrial++;
+
+
+        if (numTrial <= audioObjs.Length)
+        {
+            StartCoroutine(StartTrial(numTrial));
         }
     }
 
@@ -163,31 +228,36 @@ public class SoundLocalizationGameScript : MonoBehaviour
     {
         AndroidBackButtonListener();
 
-        if (playLeftAnimation)
+        //Top animation
+        if (playTopAnimation)
         {
-            float temp = Time.time;
-            Vector3 originalPosition = chickyLeftTransform.position;
-
-            while (Time.time - temp < 0.5)
-            {
-                chickyLeftTransform.position = chickyLeftTransform.position + new Vector3(-0.1f, 0, 0);
-            }
-
-            chickyLeftTransform.position = originalPosition;
-
+            chickyTopTransform.position = chickyTopTransform.position + new Vector3(0, -1f, 0);
+        }
+        if (originalChickyTopPosition.y - chickyTopTransform.position.y > 100)
+        {
+            playTopAnimation = false;
         }
 
+        //Left animation
+        if (playLeftAnimation)
+        {
+            chickyLeftTransform.position = chickyLeftTransform.position + new Vector3(-1f, -0, 0);
+        }
+        if (originalChickyLeftPosition.x - chickyLeftTransform.position.x > 90)
+        {
+            chickyLeftTransform.position = originalChickyLeftPosition;
+            playLeftAnimation = false;
+        }
+
+        //Right Animation
         if (playRightAnimation)
         {
-            float temp = Time.time;
-            Vector3 originalPosition = chickyLeftTransform.position;
-
-            while (Time.time - temp < 0.5)
-            {
-                chickyRightTransform.position = chickyRightTransform.position + new Vector3(0.1f, 0, 0);
-            }
-            chickyLeftTransform.position = originalPosition;
-
+            chickyRightTransform.position = chickyRightTransform.position + new Vector3(1f, -0, 0);
+        }
+        if (chickyRightTransform.position.x - originalChickyRightPosition.x > 90) //position it moves to is > than original position
+        {
+            chickyRightTransform.position = originalChickyRightPosition;
+            playRightAnimation = false;
         }
 
     }
