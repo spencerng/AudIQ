@@ -10,11 +10,11 @@ internal class SpeechInNoiseGameScript : MonoBehaviour
     private readonly int percentCorrect;
     private int numTrial;
 
-    private Text correctIncorrectText;
-    private CanvasGroup correctIncorrectTextCg;
+    private readonly Text correctIncorrectText;
+    private readonly CanvasGroup correctIncorrectTextCg;
 
-    private Image correctIncorrectPanel;
-    private CanvasGroup correctIncorrectPanelCg;
+    private readonly Image correctIncorrectPanel;
+    private readonly CanvasGroup correctIncorrectPanelCg;
 
     private Button[] wordButtons;
     private AudioObj[] audioObjs;
@@ -27,11 +27,6 @@ internal class SpeechInNoiseGameScript : MonoBehaviour
 
         numTrial = 1;
 
-        correctIncorrectText = GameObject.Find("CorrectIncorrectText").GetComponent<Text>();
-        correctIncorrectTextCg = GameObject.Find("CorrectIncorrectText").GetComponent<CanvasGroup>();
-
-        correctIncorrectPanel = GameObject.Find("CorrectIncorrectPanel").GetComponent<Image>();
-        correctIncorrectPanelCg = GameObject.Find("CorrectIncorrectPanel").GetComponent<CanvasGroup>();
 
         for (int i = 0; i < 12; i++)
         {
@@ -67,26 +62,13 @@ internal class SpeechInNoiseGameScript : MonoBehaviour
 
         if (numTrial <= audioObjs.Length)
         {
-            Color backgroundColor;
-            string textToDisplay;
 
-            if (wordButtons[buttonNum].GetComponentInChildren<Text>().text == audioObjs[numTrial - 1].GetCorrectAnswer())
-            {
-                audioObjs[numTrial - 1].SetCorrectlyAnswered(true);
-                backgroundColor = UnityEngine.Color.green;
-                textToDisplay = "Correct";
+            bool isCorrect = wordButtons[buttonNum].GetComponentInChildren<Text>().text == audioObjs[numTrial - 1].GetCorrectAnswer();
 
-            }
-            else
-            {
-                audioObjs[numTrial - 1].SetCorrectlyAnswered(false);
-                backgroundColor = UnityEngine.Color.red;
-                textToDisplay = "Incorrect";
+            audioObjs[numTrial - 1].SetCorrectlyAnswered(isCorrect);
 
-            }
+            StartCoroutine(UIHelper.FlashCorrectIncorrectScreen(isCorrect));
 
-            StartCoroutine(FlashCorrectIncorrectScreen(correctIncorrectTextCg, correctIncorrectPanelCg, correctIncorrectPanel, correctIncorrectText,
-                textToDisplay, backgroundColor));
         }
 
         numTrial++;
@@ -119,31 +101,7 @@ internal class SpeechInNoiseGameScript : MonoBehaviour
         yield return new WaitForSeconds(1f);
     }
 
-    private IEnumerator FlashCorrectIncorrectScreen(CanvasGroup textCg, CanvasGroup panelCg, Image panel, Text text,
-       string textStr, Color color, float timeBetweenFlash = 0.5f, float timeToWait = 0.75f)
-    {
-        bool changed = false;
-        for (int i = 0; i < 2; i++)
-        {
-            if (!changed)
-            {
-                text.text = textStr;
-                textCg.alpha = 1;
 
-                panel.color = color;
-                panelCg.alpha = 0.75f;
-
-                changed = true;
-            }
-            else
-            {
-                textCg.alpha = 0;
-                panelCg.alpha = 0;
-            }
-            yield return new WaitForSeconds(timeBetweenFlash);
-        }
-        yield return new WaitForSeconds(timeToWait);
-    }
 
     private void SetWordButtonListeners()
     {
@@ -214,8 +172,6 @@ internal class SpeechInNoiseGameScript : MonoBehaviour
         audioObjs[10].SetCorrectAnswer("beach");
         audioObjs[11].SetCorrectAnswer("bought");
     }
-
-
 
 }
 
