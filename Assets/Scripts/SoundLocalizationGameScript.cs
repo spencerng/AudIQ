@@ -1,8 +1,6 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class SoundLocalizationGameScript : MonoBehaviour
 {
@@ -35,7 +33,7 @@ public class SoundLocalizationGameScript : MonoBehaviour
     private int numTrial;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         chickyTop = GameObject.Find("chicky_T").GetComponent<Image>();
         chickyLeft = GameObject.Find("chicky_L").GetComponent<Image>();
@@ -93,20 +91,20 @@ public class SoundLocalizationGameScript : MonoBehaviour
      * 6. Play next sound, and all over again
      * */
 
-    void RetrieveCorrectAnswers()
+    private void RetrieveCorrectAnswers()
     {
         audioObjs[0].SetCorrectAnswer("left");
         audioObjs[1].SetCorrectAnswer("right");
     }
 
-    void SetButtonListeners()
+    private void SetButtonListeners()
     {
         buttonLeft.onClick.AddListener(() => OnButtonClick("left"));
         buttonRight.onClick.AddListener(() => OnButtonClick("right"));
 
     }
 
-    void OnButtonClick(string left_or_right)
+    private void OnButtonClick(string left_or_right)
     {
         RemoveListeners();
 
@@ -163,7 +161,7 @@ public class SoundLocalizationGameScript : MonoBehaviour
         }
     }
 
-    void RemoveListeners()
+    private void RemoveListeners()
     {
         for (int i = 0; i < 2; i++)
         {
@@ -224,9 +222,9 @@ public class SoundLocalizationGameScript : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        AndroidBackButtonListener();
+        UIHelper.OnBackButtonClickListener();
 
         //Top animation
         if (playTopAnimation)
@@ -262,15 +260,5 @@ public class SoundLocalizationGameScript : MonoBehaviour
 
     }
 
-    void AndroidBackButtonListener()
-    {
-        if (Application.platform == RuntimePlatform.Android)
-        {
-            if (Input.GetKey(KeyCode.Escape))
-            {
-                SceneManager.LoadScene("MainMenu");
-            }
 
-        }
-    }
 }

@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 internal class SpeechInNoiseGameScript : MonoBehaviour
@@ -57,7 +56,7 @@ internal class SpeechInNoiseGameScript : MonoBehaviour
 
     private void Update()
     {
-        OnBackButtonClickListener();
+        UIHelper.OnBackButtonClickListener();
 
     }
 
@@ -165,17 +164,7 @@ internal class SpeechInNoiseGameScript : MonoBehaviour
         }
     }
 
-    private void OnBackButtonClickListener()
-    {
-        if (Application.platform == RuntimePlatform.Android)
-        {
-            if (Input.GetKey(KeyCode.Escape))
-            {
-                SceneManager.LoadScene("MainMenu");
-            }
 
-        }
-    }
 
     private void AssignButtonOptions()
     {
@@ -188,7 +177,7 @@ internal class SpeechInNoiseGameScript : MonoBehaviour
             indexlist.Add(i);
         }
 
-        List<int> randomindexlist = ShuffleList(indexlist);
+        List<int> randomindexlist = Algorithms.ShuffleList(indexlist);
 
         //Assigning words to the buttons based on the randomized list
         for (int i = 0; i < buttonOptions.Length; i++)
@@ -226,22 +215,7 @@ internal class SpeechInNoiseGameScript : MonoBehaviour
         audioObjs[11].SetCorrectAnswer("bought");
     }
 
-    //Algorithm: Fisher-Yates Shuffle, taken from https://stackoverflow.com/questions/273313/randomize-a-listt
-    private List<int> ShuffleList(List<int> list)
-    {
-        System.Random rng = new System.Random();
-        int n = list.Count;
-        while (n > 1)
-        {
-            n--;
-            int k = rng.Next(n + 1);
-            int temp = list[k];
-            list[k] = list[n];
-            list[n] = temp;
-        }
 
-        return list;
-    }
 
 }
 
