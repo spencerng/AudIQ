@@ -7,7 +7,6 @@ using UnityEngine.SceneManagement;
 public class SpeechInNoiseGameScript : MonoBehaviour
 {
     public int numCorrect, numWrong, percentCorrect, numTrial;
-    public bool isClicked;
 
     public Text correctIncorrectText;
     public CanvasGroup correctIncorrectTextCg;
@@ -84,6 +83,8 @@ public class SpeechInNoiseGameScript : MonoBehaviour
         //Will do later
         //Possible options: Resource.Load, making 12 GameObjects and attaching each file individually, then AudioSource.name
         //Note: AudioSource.name returns name of the GameObject it's attached to, not the file :/
+
+        //NOTE: audioObjs has [0] as goose, but audioSources has [0] as ready
         audioObjs[0].SetCorrectAnswer("goose");
         audioObjs[1].SetCorrectAnswer("what");
         audioObjs[2].SetCorrectAnswer("touch");
@@ -152,10 +153,7 @@ public class SpeechInNoiseGameScript : MonoBehaviour
     {
         RemoveListeners();
 
-        isClicked = true;
-
         int index_for_numtrial = numTrial - 1;
-        //Should probably add conditional as a defensive programming measure -- if people do the 12 trials and press another button, shouldn't count it
 
         if (numTrial <= audioObjs.Length)
         {
@@ -237,7 +235,7 @@ public class SpeechInNoiseGameScript : MonoBehaviour
 
     void RemoveListeners()
     {
-        for (int i = 0; i < 12; i++)
+        for (int i = 0; i < wordButtons.Length; i++)
         {
             wordButtons[i].onClick.RemoveAllListeners();
         }
