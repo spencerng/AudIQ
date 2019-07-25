@@ -44,7 +44,6 @@ public class SoundLocalizationGameScript : MonoBehaviour
         originalChickyRightPosition = chickyRightTransform.position;
         originalChickyTopPosition = chickyTopTransform.position;
 
-
         AudioSource[] audioSources = GetComponents<AudioSource>();
 
         for (int i = 0; i < audioSources.Length; i++)
