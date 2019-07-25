@@ -41,7 +41,10 @@ public class SoundLocalizationGameScript : MonoBehaviour
 
         buttonLeft = GameObject.Find("Button_L").GetComponent<Button>(); //Note buttons are invisible
         buttonRight = GameObject.Find("Button_R").GetComponent<Button>();
-        
+
+        originalChickyLeftPosition = chickyLeftTransform.position;
+        originalChickyRightPosition = chickyRightTransform.position;
+
 
         AudioSource[] audioSources = GetComponents<AudioSource>();
 
@@ -106,14 +109,13 @@ public class SoundLocalizationGameScript : MonoBehaviour
 
             if (isLeftButton)
             {
-                originalChickyLeftPosition = chickyLeftTransform.position;
+                
                 playLeftAnimation = true;
 
                 
             }
             else
             {
-                originalChickyRightPosition = chickyRightTransform.position;
                 playRightAnimation = true;
 
             }
@@ -171,7 +173,8 @@ public class SoundLocalizationGameScript : MonoBehaviour
             playLeftAnimation = false;
         }
 
-        //Right Animation
+        //Right Animation 
+
         if (playRightAnimation)
         {
             chickyRightTransform.position = chickyRightTransform.position + new Vector3(1f, -0, 0);
@@ -181,6 +184,7 @@ public class SoundLocalizationGameScript : MonoBehaviour
             chickyRightTransform.position = originalChickyRightPosition;
             playRightAnimation = false;
         }
+
 
     }
 
