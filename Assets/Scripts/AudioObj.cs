@@ -22,14 +22,9 @@ public class AudioObj
 
     }
 
-    public void AnsweredCorrectly()
+    public void SetCorrectlyAnswered(bool isCorrectlyAnswered)
     {
-        correctlyAnswered = true;
-    }
-
-    public void DidNotAnswerCorrectly()
-    {
-        correctlyAnswered = false;
+        correctlyAnswered = isCorrectlyAnswered;
     }
 
     public string GetCorrectAnswer()

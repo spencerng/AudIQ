@@ -73,14 +73,14 @@ internal class SpeechInNoiseGameScript : MonoBehaviour
 
             if (wordButtons[buttonNum].GetComponentInChildren<Text>().text == audioObjs[numTrial - 1].GetCorrectAnswer())
             {
-                audioObjs[numTrial - 1].AnsweredCorrectly();
+                audioObjs[numTrial - 1].SetCorrectlyAnswered(true);
                 backgroundColor = UnityEngine.Color.green;
                 textToDisplay = "Correct";
 
             }
             else
             {
-                audioObjs[numTrial - 1].DidNotAnswerCorrectly();
+                audioObjs[numTrial - 1].SetCorrectlyAnswered(false);
                 backgroundColor = UnityEngine.Color.red;
                 textToDisplay = "Incorrect";
 
