@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 internal class SpeechInNoiseGameScript : MonoBehaviour
@@ -11,11 +10,11 @@ internal class SpeechInNoiseGameScript : MonoBehaviour
     private readonly int percentCorrect;
     private int numTrial;
 
-    private Text correctIncorrectText;
-    private CanvasGroup correctIncorrectTextCg;
+    private readonly Text correctIncorrectText;
+    private readonly CanvasGroup correctIncorrectTextCg;
 
-    private Image correctIncorrectPanel;
-    private CanvasGroup correctIncorrectPanelCg;
+    private readonly Image correctIncorrectPanel;
+    private readonly CanvasGroup correctIncorrectPanelCg;
 
     private Button[] wordButtons;
     private AudioObj[] audioObjs;
@@ -28,11 +27,6 @@ internal class SpeechInNoiseGameScript : MonoBehaviour
 
         numTrial = 1;
 
-        correctIncorrectText = GameObject.Find("CorrectIncorrectText").GetComponent<Text>();
-        correctIncorrectTextCg = GameObject.Find("CorrectIncorrectText").GetComponent<CanvasGroup>();
-
-        correctIncorrectPanel = GameObject.Find("CorrectIncorrectPanel").GetComponent<Image>();
-        correctIncorrectPanelCg = GameObject.Find("CorrectIncorrectPanel").GetComponent<CanvasGroup>();
 
         for (int i = 0; i < 12; i++)
         {
@@ -57,7 +51,7 @@ internal class SpeechInNoiseGameScript : MonoBehaviour
 
     private void Update()
     {
-        OnBackButtonClickListener();
+        UIHelper.OnBackButtonClickListener();
 
     }
 
@@ -68,26 +62,13 @@ internal class SpeechInNoiseGameScript : MonoBehaviour
 
         if (numTrial <= audioObjs.Length)
         {
-            Color backgroundColor;
-            string textToDisplay;
 
-            if (wordButtons[buttonNum].GetComponentInChildren<Text>().text == audioObjs[numTrial - 1].GetCorrectAnswer())
-            {
-                audioObjs[numTrial - 1].SetCorrectlyAnswered(true);
-                backgroundColor = UnityEngine.Color.green;
-                textToDisplay = "Correct";
+            bool isCorrect = wordButtons[buttonNum].GetComponentInChildren<Text>().text == audioObjs[numTrial - 1].GetCorrectAnswer();
 
-            }
-            else
-            {
-                audioObjs[numTrial - 1].SetCorrectlyAnswered(false);
-                backgroundColor = UnityEngine.Color.red;
-                textToDisplay = "Incorrect";
+            audioObjs[numTrial - 1].SetCorrectlyAnswered(isCorrect);
 
-            }
+            StartCoroutine(UIHelper.FlashCorrectIncorrectScreen(isCorrect));
 
-            StartCoroutine(FlashCorrectIncorrectScreen(correctIncorrectTextCg, correctIncorrectPanelCg, correctIncorrectPanel, correctIncorrectText,
-                textToDisplay, backgroundColor));
         }
 
         numTrial++;
@@ -120,31 +101,7 @@ internal class SpeechInNoiseGameScript : MonoBehaviour
         yield return new WaitForSeconds(1f);
     }
 
-    private IEnumerator FlashCorrectIncorrectScreen(CanvasGroup textCg, CanvasGroup panelCg, Image panel, Text text,
-       string textStr, Color color, float timeBetweenFlash = 0.5f, float timeToWait = 0.75f)
-    {
-        bool changed = false;
-        for (int i = 0; i < 2; i++)
-        {
-            if (!changed)
-            {
-                text.text = textStr;
-                textCg.alpha = 1;
 
-                panel.color = color;
-                panelCg.alpha = 0.75f;
-
-                changed = true;
-            }
-            else
-            {
-                textCg.alpha = 0;
-                panelCg.alpha = 0;
-            }
-            yield return new WaitForSeconds(timeBetweenFlash);
-        }
-        yield return new WaitForSeconds(timeToWait);
-    }
 
     private void SetWordButtonListeners()
     {
@@ -165,17 +122,7 @@ internal class SpeechInNoiseGameScript : MonoBehaviour
         }
     }
 
-    private void OnBackButtonClickListener()
-    {
-        if (Application.platform == RuntimePlatform.Android)
-        {
-            if (Input.GetKey(KeyCode.Escape))
-            {
-                SceneManager.LoadScene("MainMenu");
-            }
 
-        }
-    }
 
     private void AssignButtonOptions()
     {
@@ -188,7 +135,7 @@ internal class SpeechInNoiseGameScript : MonoBehaviour
             indexlist.Add(i);
         }
 
-        List<int> randomindexlist = ShuffleList(indexlist);
+        List<int> randomindexlist = Algorithms.ShuffleList(indexlist);
 
         //Assigning words to the buttons based on the randomized list
         for (int i = 0; i < buttonOptions.Length; i++)
@@ -224,23 +171,6 @@ internal class SpeechInNoiseGameScript : MonoBehaviour
         audioObjs[9].SetCorrectAnswer("boat");
         audioObjs[10].SetCorrectAnswer("beach");
         audioObjs[11].SetCorrectAnswer("bought");
-    }
-
-    //Algorithm: Fisher-Yates Shuffle, taken from https://stackoverflow.com/questions/273313/randomize-a-listt
-    private List<int> ShuffleList(List<int> list)
-    {
-        System.Random rng = new System.Random();
-        int n = list.Count;
-        while (n > 1)
-        {
-            n--;
-            int k = rng.Next(n + 1);
-            int temp = list[k];
-            list[k] = list[n];
-            list[n] = temp;
-        }
-
-        return list;
     }
 
 }
