@@ -1,27 +1,24 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
-class SpeechInNoiseGameScript : MonoBehaviour
+internal class SpeechInNoiseGameScript : MonoBehaviour
 {
-    int numCorrect, numWrong, percentCorrect, numTrial;
-    bool isClicked;
+    private readonly int numCorrect;
+    private readonly int numWrong;
+    private readonly int percentCorrect;
+    private int numTrial;
+    private Text correctIncorrectText;
+    private CanvasGroup correctIncorrectTextCg;
+    private Image correctIncorrectPanel;
+    private CanvasGroup correctIncorrectPanelCg;
+    private Button[] wordButtons;
+    private AudioObj[] audioObjs;
+    private AudioObj readyFile;
 
-    Text correctIncorrectText;
-    CanvasGroup correctIncorrectTextCg;
-
-    Image correctIncorrectPanel;
-    CanvasGroup correctIncorrectPanelCg;
-
-    Button[] wordButtons;
-    AudioObj[] audioObjs;
-
-    AudioObj readyFile;
-
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         wordButtons =  = new Button[12];
         audioObjs = new AudioObj[12];
@@ -40,7 +37,7 @@ class SpeechInNoiseGameScript : MonoBehaviour
             wordButtons[i] = GameObject.Find("SpeechGameButton" + (i + 1)).GetComponent<Button>(); //initializes button array
             //moved adding listeners to AssignButtonOptions()
         }
-        
+
         AudioSource[] audioSources = GetComponents<AudioSource>(); //Note this will be 13; first index of 0 is "ready"
         readyFile = new AudioObj(audioSources[0]);
 
@@ -48,7 +45,7 @@ class SpeechInNoiseGameScript : MonoBehaviour
         {
             audioObjs[i - 1] = new AudioObj(audioSources[i]);
         }
-        
+
         AssignButtonOptions(); //Just so that s1, s2, etc. doesn't appear on the screen
 
         StartCoroutine(StartTrial(numTrial));
@@ -56,13 +53,13 @@ class SpeechInNoiseGameScript : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         OnBackButtonClickListener();
 
     }
 
-    IEnumerator StartTrial(int trialNum)
+    private IEnumerator StartTrial(int trialNum)
     {
         //Initial pause to allow the Correct/Incorrect flash to finish
         yield return new WaitForSeconds(0.7f);
@@ -79,7 +76,7 @@ class SpeechInNoiseGameScript : MonoBehaviour
         yield return new WaitForSeconds(1f);
     }
 
-    void SetButtonListeners()
+    private void SetButtonListeners()
     {
         for (int i = 0; i < 12; i++)
         {
@@ -89,7 +86,27 @@ class SpeechInNoiseGameScript : MonoBehaviour
         }
     }
 
-    void RetrieveCorrectAnswers()
+    private void RemoveWordButtonListeners()
+    {
+        for (int i = 0; i < 12; i++)
+        {
+            wordButtons[i].onClick.RemoveAllListeners();
+        }
+    }
+
+    private void OnBackButtonClickListener()
+    {
+        if (Application.platform == RuntimePlatform.Android)
+        {
+            if (Input.GetKey(KeyCode.Escape))
+            {
+                SceneManager.LoadScene("MainMenu");
+            }
+
+        }
+    }
+
+    private void RetrieveCorrectAnswers()
     {
         //Will do later
         //Possible options: Resource.Load, making 12 GameObjects and attaching each file individually, then AudioSource.name
@@ -108,9 +125,7 @@ class SpeechInNoiseGameScript : MonoBehaviour
         audioObjs[11].SetCorrectAnswer("bought");
     }
 
-
-
-    void AssignButtonOptions()
+    private void AssignButtonOptions()
     {
         //Array of strings and list of indices that will be shuffled
         string[] buttonOptions = GetButtonOptions();
@@ -158,30 +173,34 @@ class SpeechInNoiseGameScript : MonoBehaviour
         return list;
     }
 
-    void OnSpeechButtonClick(int buttonNum)
+    private void OnSpeechButtonClick(int buttonNum)
     {
         RemoveWordButtonListeners();
-
-        isClicked = true;
 
         //Should probably add conditional as a defensive programming measure -- if people do the 12 trials and press another button, shouldn't count it
 
         if (numTrial <= audioObjs.Length)
         {
-            if (wordButtons[buttonNum].GetComponentInChildren<Text>().text == audioObjs[numTrial-1].GetCorrectAnswer())
+            Color backgroundColor;
+            string textToDisplay;
+
+            if (wordButtons[buttonNum].GetComponentInChildren<Text>().text == audioObjs[numTrial - 1].GetCorrectAnswer())
             {
-                audioObjs[numTrial-1].AnsweredCorrectly();
-                //play correct animation
-                StartCoroutine(FlashCorrectScreen(correctIncorrectTextCg, correctIncorrectPanelCg, correctIncorrectPanel, correctIncorrectText));
+                audioObjs[numTrial - 1].AnsweredCorrectly();
+                backgroundColor = UnityEngine.Color.green;
+                textToDisplay = "Correct";
 
             }
             else
             {
-                audioObjs[numTrial-1].DidNotAnswerCorrectly();
-                //play incorrect animation
-                StartCoroutine(FlashIncorrectScreen(correctIncorrectTextCg, correctIncorrectPanelCg, correctIncorrectPanel, correctIncorrectText));
+                audioObjs[numTrial - 1].DidNotAnswerCorrectly();
+                backgroundColor = UnityEngine.Color.red;
+                textToDisplay = "Incorrect";
 
             }
+
+            StartCoroutine(FlashCorrectIncorrectScreen(correctIncorrectTextCg, correctIncorrectPanelCg, correctIncorrectPanel, correctIncorrectText,
+                textToDisplay, backgroundColor));
         }
 
         numTrial++;
@@ -191,84 +210,35 @@ class SpeechInNoiseGameScript : MonoBehaviour
         {
             StartCoroutine(StartTrial(numTrial));
         }
-        
+
     }
 
-    IEnumerator FlashCorrectScreen(CanvasGroup text_cg, CanvasGroup panel_cg, Image panel, Text text, float timeBetweenFlash = 0.5f, float timeToWait = 0.75f)
+    private IEnumerator FlashCorrectIncorrectScreen(CanvasGroup textCg, CanvasGroup panelCg, Image panel, Text text,
+       string textStr, Color color, float timeBetweenFlash = 0.5f, float timeToWait = 0.75f)
     {
         bool changed = false;
         for (int i = 0; i < 2; i++)
         {
             if (!changed)
             {
-                text.text = "Correct!";
-                text_cg.alpha = 1;
+                text.text = textStr;
+                textCg.alpha = 1;
 
-                panel.color = UnityEngine.Color.green;
-                panel_cg.alpha = 0.75f;
+                panel.color = color;
+                panelCg.alpha = 0.75f;
 
                 changed = true;
             }
             else
             {
-                text_cg.alpha = 0;
-                panel_cg.alpha = 0;
+                textCg.alpha = 0;
+                panelCg.alpha = 0;
             }
             yield return new WaitForSeconds(timeBetweenFlash);
         }
         yield return new WaitForSeconds(timeToWait);
     }
 
-    IEnumerator FlashIncorrectScreen(CanvasGroup text_cg, CanvasGroup panel_cg, Image panel, Text text, float timeBetweenFlash = 0.5f, float timeToWait = 0.75f)
-    {
-        bool changed = false;
-        for (int i = 0; i < 2; i++)
-        {
-            if (!changed)
-            {
-                text.text = "Wrong!";
-                text_cg.alpha = 1;
 
-                panel.color = UnityEngine.Color.red;
-                panel_cg.alpha = 0.75f;
-
-                changed = true;
-            }
-            else
-            {
-                text_cg.alpha = 0;
-                panel_cg.alpha = 0;
-            }
-            yield return new WaitForSeconds(timeBetweenFlash);
-        }
-        yield return new WaitForSeconds(timeToWait);
-    }
-
-    void RemoveWordButtonListeners()
-    {
-        for (int i = 0; i < 12; i++)
-        {
-            wordButtons[i].onClick.RemoveAllListeners();
-        }
-    }
-
-
-
-    void OnBackButtonClickListener()
-    {
-        if (Application.platform == RuntimePlatform.Android)
-        {
-            if (Input.GetKey(KeyCode.Escape))
-            {
-                SceneManager.LoadScene("MainMenu");
-            }
-
-        }
-    }
 }
 
-/*
- * Added the flash correct/incorrect methods
- * made the start trial a coroutine 
- * 
- * */
