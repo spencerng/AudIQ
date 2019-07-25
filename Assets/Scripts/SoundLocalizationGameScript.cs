@@ -155,7 +155,7 @@ public class SoundLocalizationGameScript : MonoBehaviour
         {
             chickyTopTransform.position = chickyTopTransform.position + new Vector3(0, -1f, 0);
         }
-        if (originalChickyTopPosition.y - chickyTopTransform.position.y > 100)
+        if (originalChickyTopPosition.y - chickyTopTransform.position.y > 150)
         {
             playTopAnimation = false;
         }
