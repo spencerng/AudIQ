@@ -23,7 +23,7 @@ internal class SpeechInNoiseGameScript : MonoBehaviour
 
     private void Start()
     {
-        wordButtons =  = new Button[12];
+        wordButtons = new Button[12];
         audioObjs = new AudioObj[12];
 
         numTrial = 1;
