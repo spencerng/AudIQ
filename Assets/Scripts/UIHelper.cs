@@ -69,4 +69,14 @@ public class UIHelper : MonoBehaviour
         }
         yield return new WaitForSeconds(timeToWait);
     }
+
+    //Return: finalPos reached
+    public static bool Translate(Transform target, Vector3 direction, Vector3 finalPos)
+    {
+        target.position = target.position + direction;
+
+
+        return target.position.Equals(finalPos);
+
+    }
 }

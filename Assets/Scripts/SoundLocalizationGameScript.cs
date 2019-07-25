@@ -4,36 +4,34 @@ using UnityEngine.UI;
 
 public class SoundLocalizationGameScript : MonoBehaviour
 {
-    public Image chickyTop;
-    public Image chickyLeft;
-    public Image chickyRight;
 
-    public Transform chickyTopTransform;
-    public Transform chickyLeftTransform;
-    public Transform chickyRightTransform;
+    private Transform chickyTopTransform;
+    private Transform chickyLeftTransform;
+    private Transform chickyRightTransform;
 
-    public Button buttonLeft;
-    public Button buttonRight;
+    private Button buttonLeft;
+    private Button buttonRight;
 
-    public AudioObj[] audioObjs = new AudioObj[2]; //for now we have two trials, CHANGE L8R
+    //for now we have two trials, change later
+    private AudioObj[] audioObjs;
 
-    public bool playLeftAnimation; //I just made booleans so that the Update frame plays animations, perhaps a better way is to play a method for a set # of seconds
-    public bool playRightAnimation;
+    //I just made booleans so that the Update frame plays animations, perhaps a better way is to play a method for a set # of seconds
+    private bool playLeftAnimation;
+    private bool playRightAnimation;
     private bool playTopAnimation;
 
     private Vector3 originalChickyTopPosition;
     private Vector3 originalChickyLeftPosition;
     private Vector3 originalChickyRightPosition;
-    
+
 
     private int numTrial;
 
     // Start is called before the first frame update
     private void Start()
     {
-        chickyTop = GameObject.Find("chicky_T").GetComponent<Image>();
-        chickyLeft = GameObject.Find("chicky_L").GetComponent<Image>();
-        chickyRight = GameObject.Find("chicky_R").GetComponent<Image>();
+        audioObjs = new AudioObj[2];
+        numTrial = 1;
 
         chickyTopTransform = GameObject.Find("chicky_T").GetComponent<Transform>();
         chickyLeftTransform = GameObject.Find("chicky_L").GetComponent<Transform>();
@@ -44,6 +42,7 @@ public class SoundLocalizationGameScript : MonoBehaviour
 
         originalChickyLeftPosition = chickyLeftTransform.position;
         originalChickyRightPosition = chickyRightTransform.position;
+        originalChickyTopPosition = chickyTopTransform.position;
 
 
         AudioSource[] audioSources = GetComponents<AudioSource>();
@@ -53,23 +52,19 @@ public class SoundLocalizationGameScript : MonoBehaviour
             audioObjs[i] = new AudioObj(audioSources[i]);
         }
 
-        numTrial = 1;
+       
 
-        originalChickyTopPosition = chickyTopTransform.position;
-        playTopAnimation = true; //just an initial animation
-
+        playTopAnimation = true;
+    
         StartCoroutine(StartTrial(numTrial));
     }
 
-    public IEnumerator StartTrial(int trialNum)
+    private IEnumerator StartTrial(int trialNum)
     {
         //Initial pause to allow the Correct/Incorrect flash to finish
         yield return new WaitForSeconds(0.7f);
 
         RetrieveCorrectAnswers();
-
-        //readyFile.GetAudioSource().PlayOneShot(readyFile.GetAudioClip()); //atm, no ready file
-        //yield return new WaitForSeconds(1f);
 
         audioObjs[trialNum - 1].GetAudioSource().PlayOneShot(audioObjs[trialNum - 1].GetAudioClip()); //plays clip, trial 1 corresponds to index 0
         SetButtonListeners(); //Set/remove new listeners every trial to prevent registering accidental double taps
@@ -107,18 +102,7 @@ public class SoundLocalizationGameScript : MonoBehaviour
         if (numTrial <= audioObjs.Length)
         {
 
-            if (isLeftButton)
-            {
-                
-                playLeftAnimation = true;
-
-                
-            }
-            else
-            {
-                playRightAnimation = true;
-
-            }
+            playLeftAnimation = isLeftButton;
 
             bool correctlyAnswered = audioObjs[indexForTrial].GetCorrectAnswer() == (isLeftButton ? "left" : "right");
 
@@ -145,46 +129,31 @@ public class SoundLocalizationGameScript : MonoBehaviour
         }
     }
 
-
-
-    // Update is called once per frame
     private void Update()
     {
         UIHelper.OnBackButtonClickListener();
 
         //Top animation
-        if (playTopAnimation)
-        {
-            chickyTopTransform.position = chickyTopTransform.position + new Vector3(0, -1f, 0);
-        }
-        if (originalChickyTopPosition.y - chickyTopTransform.position.y > 150)
+        if (playTopAnimation && UIHelper.Translate(chickyTopTransform, new Vector3(0, -1f), originalChickyTopPosition + new Vector3(0, -150f)))
         {
             playTopAnimation = false;
+            chickyTopTransform.position = originalChickyTopPosition;
         }
 
         //Left animation
-        if (playLeftAnimation)
+        if (playLeftAnimation && UIHelper.Translate(chickyLeftTransform, new Vector3(-1f, 0), originalChickyLeftPosition + new Vector3(-90f, 0)))
         {
-            chickyLeftTransform.position = chickyLeftTransform.position + new Vector3(-1f, -0, 0);
-        }
-        if (originalChickyLeftPosition.x - chickyLeftTransform.position.x > 90)
-        {
-            chickyLeftTransform.position = originalChickyLeftPosition;
             playLeftAnimation = false;
+            chickyLeftTransform.position = originalChickyLeftPosition;
         }
 
         //Right Animation 
 
-        if (playRightAnimation)
+        if (playRightAnimation && UIHelper.Translate(chickyRightTransform, new Vector3(1f, 0), originalChickyRightPosition + new Vector3(90f, 0)))
         {
-            chickyRightTransform.position = chickyRightTransform.position + new Vector3(1f, -0, 0);
-        }
-        if (chickyRightTransform.position.x - originalChickyRightPosition.x > 90) //position it moves to is > than original position
-        {
-            chickyRightTransform.position = originalChickyRightPosition;
             playRightAnimation = false;
+            chickyRightTransform.position = originalChickyRightPosition;
         }
-
 
     }
 
