@@ -24,11 +24,7 @@ public class SoundLocalizationGameScript : MonoBehaviour
     private Vector3 originalChickyTopPosition;
     private Vector3 originalChickyLeftPosition;
     private Vector3 originalChickyRightPosition;
-
-    private Text correctIncorrectText;
-    private CanvasGroup correctIncorrectTextCg;
-    private Image correctIncorrectPanel;
-    private CanvasGroup correctIncorrectPanelCg;
+    
 
     private int numTrial;
 
@@ -45,12 +41,7 @@ public class SoundLocalizationGameScript : MonoBehaviour
 
         buttonLeft = GameObject.Find("Button_L").GetComponent<Button>(); //Note buttons are invisible
         buttonRight = GameObject.Find("Button_R").GetComponent<Button>();
-
-        correctIncorrectText = GameObject.Find("CorrectIncorrectText").GetComponent<Text>();
-        correctIncorrectTextCg = GameObject.Find("CorrectIncorrectText").GetComponent<CanvasGroup>();
-
-        correctIncorrectPanel = GameObject.Find("CorrectIncorrectPanel").GetComponent<Image>();
-        correctIncorrectPanelCg = GameObject.Find("CorrectIncorrectPanel").GetComponent<CanvasGroup>();
+        
 
         AudioSource[] audioSources = GetComponents<AudioSource>();
 
@@ -99,12 +90,12 @@ public class SoundLocalizationGameScript : MonoBehaviour
 
     private void SetButtonListeners()
     {
-        buttonLeft.onClick.AddListener(() => OnButtonClick("left"));
-        buttonRight.onClick.AddListener(() => OnButtonClick("right"));
+        buttonLeft.onClick.AddListener(() => OnButtonClick(true));
+        buttonRight.onClick.AddListener(() => OnButtonClick(false));
 
     }
 
-    private void OnButtonClick(string left_or_right)
+    private void OnButtonClick(bool isLeftButton)
     {
         RemoveListeners();
 
@@ -113,43 +104,24 @@ public class SoundLocalizationGameScript : MonoBehaviour
         if (numTrial <= audioObjs.Length)
         {
 
-            if (left_or_right == "left")
+            if (isLeftButton)
             {
                 originalChickyLeftPosition = chickyLeftTransform.position;
                 playLeftAnimation = true;
 
-                //add in correct/incorrect 
-                if (audioObjs[indexForTrial].GetCorrectAnswer() == left_or_right)
-                {
-                    audioObjs[indexForTrial].SetCorrectlyAnswered(true);
-                    StartCoroutine(FlashCorrectScreen(correctIncorrectTextCg, correctIncorrectPanelCg, correctIncorrectPanel, correctIncorrectText));
-                }
-                else
-                {
-                    audioObjs[indexForTrial].SetCorrectlyAnswered(false);
-                    //play incorrect animation
-                    StartCoroutine(FlashIncorrectScreen(correctIncorrectTextCg, correctIncorrectPanelCg, correctIncorrectPanel, correctIncorrectText));
-                }
-
+                
             }
-            else //if left_or_right == "right"
+            else
             {
                 originalChickyRightPosition = chickyRightTransform.position;
                 playRightAnimation = true;
-                //add in correct/incorrect animations
-                if (audioObjs[indexForTrial].GetCorrectAnswer() == left_or_right)
-                {
-                    audioObjs[indexForTrial].SetCorrectlyAnswered(true);
-                    StartCoroutine(FlashCorrectScreen(correctIncorrectTextCg, correctIncorrectPanelCg, correctIncorrectPanel, correctIncorrectText));
-                }
-                else
-                {
-                    audioObjs[indexForTrial].SetCorrectlyAnswered(false);
-                    //play incorrect animation
-                    StartCoroutine(FlashIncorrectScreen(correctIncorrectTextCg, correctIncorrectPanelCg, correctIncorrectPanel, correctIncorrectText));
-                }
 
             }
+
+            bool correctlyAnswered = audioObjs[indexForTrial].GetCorrectAnswer() == (isLeftButton ? "left" : "right");
+
+            audioObjs[indexForTrial].SetCorrectlyAnswered(correctlyAnswered);
+            StartCoroutine(UIHelper.FlashCorrectIncorrectScreen(correctlyAnswered));
 
         }
         numTrial++;
@@ -171,55 +143,7 @@ public class SoundLocalizationGameScript : MonoBehaviour
         }
     }
 
-    public IEnumerator FlashCorrectScreen(CanvasGroup text_cg, CanvasGroup panel_cg, Image panel, Text text, float timeBetweenFlash = 0.5f, float timeToWait = 0.75f)
-    {
-        bool changed = false;
-        for (int i = 0; i < 2; i++)
-        {
-            if (!changed)
-            {
-                text.text = "Correct!";
-                text_cg.alpha = 1;
 
-                panel.color = UnityEngine.Color.green;
-                panel_cg.alpha = 0.75f;
-
-                changed = true;
-            }
-            else
-            {
-                text_cg.alpha = 0;
-                panel_cg.alpha = 0;
-            }
-            yield return new WaitForSeconds(timeBetweenFlash);
-        }
-        yield return new WaitForSeconds(timeToWait);
-    }
-
-    public IEnumerator FlashIncorrectScreen(CanvasGroup text_cg, CanvasGroup panel_cg, Image panel, Text text, float timeBetweenFlash = 0.5f, float timeToWait = 0.75f)
-    {
-        bool changed = false;
-        for (int i = 0; i < 2; i++)
-        {
-            if (!changed)
-            {
-                text.text = "Wrong!";
-                text_cg.alpha = 1;
-
-                panel.color = UnityEngine.Color.red;
-                panel_cg.alpha = 0.75f;
-
-                changed = true;
-            }
-            else
-            {
-                text_cg.alpha = 0;
-                panel_cg.alpha = 0;
-            }
-            yield return new WaitForSeconds(timeBetweenFlash);
-        }
-        yield return new WaitForSeconds(timeToWait);
-    }
 
     // Update is called once per frame
     private void Update()
