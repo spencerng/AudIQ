@@ -41,7 +41,9 @@ public class SoundLocalizationGameScript : MonoBehaviour
 
         buttonLeft = GameObject.Find("Button_L").GetComponent<Button>(); //Note buttons are invisible
         buttonRight = GameObject.Find("Button_R").GetComponent<Button>();
-        
+
+        //fix glitch of right chicken teleporting
+        chickyRightTransform.position = new Vector3(485f, 312f, 1f);
 
         AudioSource[] audioSources = GetComponents<AudioSource>();
 
