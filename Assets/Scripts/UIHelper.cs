@@ -5,13 +5,13 @@ using UnityEngine.UI;
 
 public class UIHelper : MonoBehaviour
 {
-    public static void OnBackButtonClickListener()
+    public static void OnBackButtonClickListener(string scene)
     {
         if (Application.platform == RuntimePlatform.Android)
         {
             if (Input.GetKey(KeyCode.Escape))
             {
-                SceneManager.LoadScene("MainMenu");
+                SceneManager.LoadScene(scene);
             }
 
         }

@@ -130,7 +130,7 @@ public class SoundLocalizationGameScript : MonoBehaviour
 
     private void Update()
     {
-        UIHelper.OnBackButtonClickListener();
+        UIHelper.OnBackButtonClickListener("MainMenu");
 
         //Top animation
         if (playTopAnimation && UIHelper.Translate(chickyTopTransform, new Vector3(0, -1f), originalChickyTopPosition + new Vector3(0, -150f)))

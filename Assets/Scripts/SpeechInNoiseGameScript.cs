@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-internal class SpeechInNoiseGameScript : MonoBehaviour
+internal class SpeechInNoiseGameScript : JeopardySceneScript //NOTE: I made it inherit the protected int numButton from JeopardySceneScript
 {
     private readonly int numCorrect;
     private readonly int numWrong;
@@ -26,6 +26,9 @@ internal class SpeechInNoiseGameScript : MonoBehaviour
         audioObjs = new AudioObj[12];
 
         numTrial = 1;
+
+        SetSpeechInNoiseTrialNum(); //fetches SpeechInNoiseTrialNum from JeopardySceneScript
+        Debug.Log(SpeechInNoiseTrialNum); //TEST TO SEE IF IT WORKS, CURRENTLY IT'S AT -1???
 
 
         for (int i = 0; i < 12; i++)
@@ -51,7 +54,7 @@ internal class SpeechInNoiseGameScript : MonoBehaviour
 
     private void Update()
     {
-        UIHelper.OnBackButtonClickListener();
+        UIHelper.OnBackButtonClickListener("JeopardyGame");
 
     }
 
