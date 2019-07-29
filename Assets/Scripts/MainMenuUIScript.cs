@@ -7,9 +7,15 @@ public class MainMenuUIScript : MonoBehaviour
 {
     public void StartSpeechInNoiseGame()
     {
-        Screen.orientation = ScreenOrientation.LandscapeLeft;
-        SceneManager.LoadScene("JeopardyGame");
+        StartCoroutine(SwitchToLandscape());
 
+    }
+
+    public IEnumerator SwitchToLandscape()
+    {
+        Screen.orientation = ScreenOrientation.LandscapeLeft;
+        yield return new WaitForSeconds(1f);
+        SceneManager.LoadScene("JeopardyGame");
     }
 
     public void StartSoundLocalizationGame()

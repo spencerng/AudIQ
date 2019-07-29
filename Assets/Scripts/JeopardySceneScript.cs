@@ -24,7 +24,7 @@ public class JeopardySceneScript : MonoBehaviour
     {
         optionButtons = new Button[25];
         transforms = new RectTransform[25];
-        Screen.orientation = ScreenOrientation.LandscapeLeft;
+        //Screen.orientation = ScreenOrientation.LandscapeLeft;
 
         GameObject.Find("ScoreText").GetComponent<Text>().text = "Score: " + score.ToString();
 
@@ -36,21 +36,15 @@ public class JeopardySceneScript : MonoBehaviour
 
         int height, width;
 
-        //glitches when entering landscape mode; this forces width to be width and height to be height
-        if (Screen.width > Screen.height)
-        {
-            height = Screen.height;
-            width = Screen.width;
-        } else
-        {
-            Debug.Log("E");
-            height = Screen.width;
-            width = Screen.height;
-        }
-
+        height = Screen.height;
+        width = Screen.width;
 
         //Set GUI
         for (int columnNum = 0; columnNum < 5; columnNum++) {
+            GameObject.Find("ButtonCat" + columnNum).GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height / 12);
+            GameObject.Find("ButtonCat" + columnNum).GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width / 5);
+            GameObject.Find("ButtonCat" + columnNum).GetComponent<RectTransform>().position = new Vector3(width / 5 * columnNum, height*11/24, 0);
+
             for (int rowNum = 0; rowNum < 5; rowNum++)
             {
                 transforms[5 * columnNum + rowNum].SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height / 12);
