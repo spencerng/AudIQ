@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SoundLocalizationGame.unity
     guid: 16b864ac230e0be4e8f16c38aadef5ec
+  - enabled: 1
+    path: Assets/Scenes/JeopardyGame.unity
+    guid: f88f6b548efffdf42ae4065144d5638f
   m_configObjects: {}

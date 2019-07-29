@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+
 
 internal class SpeechInNoiseGameScript : JeopardySceneScript //NOTE: I made it inherit the protected int numButton from JeopardySceneScript
 {
@@ -22,13 +24,13 @@ internal class SpeechInNoiseGameScript : JeopardySceneScript //NOTE: I made it i
 
     private void Start()
     {
+        Screen.orientation = ScreenOrientation.LandscapeLeft;
         wordButtons = new Button[12];
         audioObjs = new AudioObj[12];
 
         numTrial = 1;
 
-        SetSpeechInNoiseTrialNum(); //fetches SpeechInNoiseTrialNum from JeopardySceneScript
-        Debug.Log(SpeechInNoiseTrialNum); //TEST TO SEE IF IT WORKS, CURRENTLY IT'S AT -1???
+        //SpeechInNoiseTrialNum IS FROM JEOPARDYSCENE, HAS NOT BEEN DESTROYED
 
 
         for (int i = 0; i < 12; i++)
@@ -58,7 +60,7 @@ internal class SpeechInNoiseGameScript : JeopardySceneScript //NOTE: I made it i
 
     }
 
-    private void OnSpeechButtonClick(int buttonNum)
+    private IEnumerator OnSpeechButtonClick(int buttonNum)
     {
         RemoveWordButtonListeners();
 
@@ -67,6 +69,14 @@ internal class SpeechInNoiseGameScript : JeopardySceneScript //NOTE: I made it i
         {
 
             bool isCorrect = wordButtons[buttonNum].GetComponentInChildren<Text>().text == audioObjs[numTrial - 1].GetCorrectAnswer();
+
+            if (isCorrect)
+            {
+                score = score + 100 + 100*(SpeechInNoiseTrialNum % 5); //For example, if the trial # is 4, the button pressed is 5 for 500 pts
+            } else
+            {
+
+            }
 
             audioObjs[numTrial - 1].SetCorrectlyAnswered(isCorrect);
 
@@ -79,16 +89,17 @@ internal class SpeechInNoiseGameScript : JeopardySceneScript //NOTE: I made it i
 
         if (numTrial <= audioObjs.Length)
         {
-            StartCoroutine(StartTrial(numTrial));
+            DontDestroyOnLoad(this.gameObject);
+            //Initial pause to allow the Correct/Incorrect flash to finish
+            yield return new WaitForSeconds(0.7f);
+            SceneManager.LoadScene("JeopardyGame");
+            //StartCoroutine(StartTrial(numTrial)); //don't want a new trial; want to go back to jeopardy
         }
 
     }
 
     private IEnumerator StartTrial(int trialNum)
     {
-        //Initial pause to allow the Correct/Incorrect flash to finish
-        yield return new WaitForSeconds(0.7f);
-
         AssignButtonOptions();
         RetrieveCorrectAnswers();
 
@@ -113,7 +124,7 @@ internal class SpeechInNoiseGameScript : JeopardySceneScript //NOTE: I made it i
             //Additional variable needed for a "static" value reference
             int buttonNum = i;
 
-            wordButtons[i].onClick.AddListener(() => OnSpeechButtonClick(buttonNum));
+            wordButtons[i].onClick.AddListener(() => StartCoroutine(OnSpeechButtonClick(buttonNum)));
         }
     }
 

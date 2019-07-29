@@ -7,7 +7,8 @@ public class MainMenuUIScript : MonoBehaviour
 {
     public void StartSpeechInNoiseGame()
     {
-        SceneManager.LoadScene("SpeechInNoiseGame");
+        Screen.orientation = ScreenOrientation.LandscapeLeft;
+        SceneManager.LoadScene("JeopardyGame");
 
     }
 
@@ -24,17 +25,7 @@ public class MainMenuUIScript : MonoBehaviour
 
     public void Start()
     {
-        if (Application.platform == RuntimePlatform.Android)
-        {
-            if (Input.GetKey(KeyCode.Escape))
-            {
-                SceneManager.LoadScene("MainMenu");
-
-
-                return;
-            }
-
-        }
+        Screen.orientation = ScreenOrientation.Portrait;
     }
 }
 

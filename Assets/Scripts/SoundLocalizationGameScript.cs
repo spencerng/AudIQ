@@ -30,6 +30,8 @@ public class SoundLocalizationGameScript : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
+        Screen.orientation = ScreenOrientation.Portrait;
+
         audioObjs = new AudioObj[2];
         numTrial = 1;
 
