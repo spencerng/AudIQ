@@ -22,32 +22,35 @@ internal class SpeechInNoiseGameScript : JeopardySceneScript //NOTE: I made it i
     private AudioObj[] audioObjs;
     private AudioObj readyFile;
 
+    //TO-DO: Will need to make method interacting with database, GetAudioFiles();
+
     private void Start()
     {
         Screen.orientation = ScreenOrientation.LandscapeLeft;
         wordButtons = new Button[12];
         audioObjs = new AudioObj[12];
 
-        numTrial = 1;
+        numTrial = 1; //WILL HAVE TO COMMENT THIS OUT AFTER WE HAVE 25 TRIALS
+        //numTrial = SpeechInNoiseTrialNum; //SpeechInNoiseTrialNum is public static, from JeopardySceneScript
 
         //SpeechInNoiseTrialNum IS FROM JEOPARDYSCENE, HAS NOT BEEN DESTROYED
 
-
+        //Assign buttons
         for (int i = 0; i < 12; i++)
         {
             wordButtons[i] = GameObject.Find("SpeechGameButton" + (i + 1)).GetComponent<Button>();
         }
 
+        //TO-DO: Will need to turn this into a method at a later date, GetAudioFiles();
         // Has length of 13; element 0 is "ready"
         AudioSource[] audioSources = GetComponents<AudioSource>();
         readyFile = new AudioObj(audioSources[0]);
-
         for (int i = 1; i < audioSources.Length; i++)
         {
             audioObjs[i - 1] = new AudioObj(audioSources[i]);
         }
 
-        //Done so s1, s2, etc. doesn't appear on the screen
+        //Done so original button text doesn't appear on the screen
         AssignButtonOptions();
 
         StartCoroutine(StartTrial(numTrial));
@@ -57,39 +60,32 @@ internal class SpeechInNoiseGameScript : JeopardySceneScript //NOTE: I made it i
     private void Update()
     {
         UIHelper.OnBackButtonClickListener("JeopardyGame");
-
     }
 
     private IEnumerator OnSpeechButtonClick(int buttonNum)
     {
         RemoveWordButtonListeners();
 
-
         if (numTrial <= audioObjs.Length)
         {
-
             bool isCorrect = wordButtons[buttonNum].GetComponentInChildren<Text>().text == audioObjs[numTrial - 1].GetCorrectAnswer();
 
             if (isCorrect)
             {
-                score = score + 100 + 100*(SpeechInNoiseTrialNum % 5); //For example, if the trial # is 4, the button pressed is 5 for 500 pts
-            } else
-            {
-
+                score = score + 100 + 100*((SpeechInNoiseTrialNum - 1) % 5); //For example, pressing button5 = trial 5, 100 + 100*(4 % 5)
             }
-
             audioObjs[numTrial - 1].SetCorrectlyAnswered(isCorrect);
 
             StartCoroutine(UIHelper.FlashCorrectIncorrectScreen(isCorrect));
 
         }
 
-        numTrial++;
+        //numTrial++; //Had this when we played one trial after another in the original SpeechInNoiseGame
 
 
         if (numTrial <= audioObjs.Length)
         {
-            DontDestroyOnLoad(this.gameObject);
+            DontDestroyOnLoad(this.gameObject); //Need this so that the data in the invisibleButtons List does not get deleted
             //Initial pause to allow the Correct/Incorrect flash to finish
             yield return new WaitForSeconds(0.7f);
             SceneManager.LoadScene("JeopardyGame");
@@ -149,6 +145,7 @@ internal class SpeechInNoiseGameScript : JeopardySceneScript //NOTE: I made it i
             indexlist.Add(i);
         }
 
+        //Probably don't need to randomize buttons, but will need to randomize files drawn from database
         List<int> randomindexlist = Algorithms.ShuffleList(indexlist);
 
         //Assigning words to the buttons based on the randomized list
@@ -161,8 +158,7 @@ internal class SpeechInNoiseGameScript : JeopardySceneScript //NOTE: I made it i
 
     private string[] GetButtonOptions()
     {
-
-        //temporararily did this, we'll have to actually retrieve text from buttons later
+        //temporararily did this, we'll have to actually retrieve text from buttons later (ie, each audio file in a database has 12 associated options)
         string[] buttonOptions = { "beach", "boot", "touch", "boat", "juice", "bought", "food", "goose", "noise", "cheese", "what", "choose" };
 
         return buttonOptions;

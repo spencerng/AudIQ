@@ -5,18 +5,18 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 
-//TO DO: NEED TO DESTROY THE SCENE IF THEY GO BACK (IE, CUSTOM BACK BUTTON SCRIPT) OR IF THEY'RE DONE
-//CREATE TEXT KEEPING TRACK OF POINTS
-//MAKING BUTTONS DISSAPPEAR AND REMOVING LISTENERS AFTER TRIAL
+//TO-DO: NEED TO DESTROY THE SCENE IF THEY GO BACK (IE, CUSTOM BACK BUTTON SCRIPT) OR IF THEY'RE DONE
+//TO-DO: NEED TO MAKE A RESULTS OBJECT THAT STORES DATA?
 
 public class JeopardySceneScript : MonoBehaviour
 {
     private Button[] optionButtons; //Could make an array of arrays but that's more lines of code, unneeded
     private RectTransform[] transforms;
-    public static int SpeechInNoiseTrialNum; //default value is 0, public bc shared
     private int pressedButton;
     private CanvasGroup buttonCanvasGroup;
-    public static List<int> invisibleButtons = new List<int>(); // don't want to reset in start every time
+
+    public static List<int> invisibleButtons = new List<int>(); // don't want to reset in start every time, initialized here
+    public static int SpeechInNoiseTrialNum; //default value is 0, public bc shared
     public static int score;
 
     // Start is called before the first frame update
@@ -28,35 +28,31 @@ public class JeopardySceneScript : MonoBehaviour
 
         GameObject.Find("ScoreText").GetComponent<Text>().text = "Score: " + score.ToString();
 
+        //Assign buttons and transforms
         for (int i = 1; i <= 25; i++)
         {
-            optionButtons[i - 1 ] = GameObject.Find("Button" + i).GetComponent<Button>(); //Buttons 1-5 are for Cat 1, 6-10 for Cat 2, etc.
+            optionButtons[i - 1] = GameObject.Find("Button" + i).GetComponent<Button>(); //Buttons 1-5 are for Cat 1, 6-10 for Cat 2, etc.
             transforms[i - 1] = GameObject.Find("Button" + i).GetComponent<RectTransform>();
         }
 
-        int height, width;
-
-        height = Screen.height;
-        width = Screen.width;
-
         //Set GUI
         for (int columnNum = 0; columnNum < 5; columnNum++) {
-            GameObject.Find("ButtonCat" + columnNum).GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height / 12);
-            GameObject.Find("ButtonCat" + columnNum).GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width / 5);
-            GameObject.Find("ButtonCat" + columnNum).GetComponent<RectTransform>().position = new Vector3(width / 5 * columnNum, height*11/24, 0);
+            GameObject.Find("ButtonCat" + columnNum).GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Screen.height / 12);
+            GameObject.Find("ButtonCat" + columnNum).GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Screen.width / 5);
+            GameObject.Find("ButtonCat" + columnNum).GetComponent<RectTransform>().position = new Vector3(Screen.width / 5 * columnNum, Screen.height * 11/24, 0);
 
             for (int rowNum = 0; rowNum < 5; rowNum++)
             {
-                transforms[5 * columnNum + rowNum].SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height / 12);
-                transforms[5 * columnNum + rowNum].SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width / 5);
-                transforms[5*columnNum + rowNum].position = new Vector3(width / 5 * columnNum, (height/12 * (5 - rowNum)) - (height/12), 0);
+                transforms[5 * columnNum + rowNum].SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Screen.height / 12);
+                transforms[5 * columnNum + rowNum].SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Screen.width / 5);
+                transforms[5*columnNum + rowNum].position = new Vector3(Screen.width / 5 * columnNum, (Screen.height / 12 * (5 - rowNum)) - (Screen.height / 12), 0);
             }
         }
         
 
         SetOptionButtonListeners();
 
-        //Need this loop because for some reason the buttons don't stay invisible
+        //Need this loop because for some reason the buttons don't stay invisible upon reentering screen
         for (int i = 0; i < invisibleButtons.Count; i++)
         {
             Debug.Log(invisibleButtons[i]);
@@ -70,7 +66,6 @@ public class JeopardySceneScript : MonoBehaviour
     {
         for (int i = 0; i < 25; i++)
         {
-            //Additional variable needed for a "static" value reference
             int buttonNum = i;
             optionButtons[i].onClick.AddListener(() => OnSpeechButtonClick(buttonNum));
         }
@@ -86,14 +81,10 @@ public class JeopardySceneScript : MonoBehaviour
         buttonCanvasGroup.alpha = 0;
 
         pressedButton = buttonNum;
-        SpeechInNoiseTrialNum = pressedButton; //ie, pressing Button1 activates Trial 0 (since Button1 is optionButton[0])
-
+        SpeechInNoiseTrialNum = pressedButton + 1; //ie, pressing Button1 activates Trial 1 (+1 is since Button1 is optionButton[0])
 
         DontDestroyOnLoad(this.gameObject); //NOT DESTROYING THE GAME OBJECT ALLOWS THE SPEECHINNOISEGAMESCRIPT TO USE THE VALUE FOR SpeechInNoiseTrialNum
         SceneManager.LoadScene("SpeechInNoiseGame");
-
-
-
     }
 
     // Update is called once per frame
@@ -102,6 +93,3 @@ public class JeopardySceneScript : MonoBehaviour
         UIHelper.OnBackButtonClickListener("MainMenu");
     }
 }
-//need to log all the selected tiles: turn invisible, turn off listener.
-//On click: load speechinnoise scene, play ONE trial (associated with the button_num), & based on if correct, update score
-//Then, reload this scene. 
