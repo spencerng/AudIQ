@@ -17,9 +17,7 @@ public class AudioObj
 
     public void SetCorrectAnswer(string correctAnswer)
     {
-        //no idea how to do this
         this.correctAnswer = correctAnswer;
-
     }
 
     public void SetCorrectlyAnswered(bool isCorrectlyAnswered)

@@ -75,7 +75,6 @@ public class UIHelper : MonoBehaviour
     {
         target.position = target.position + direction;
 
-
         return target.position.Equals(finalPos);
 
     }
