@@ -24,5 +24,6 @@ public class PitchDiscriminationGameScript : MonoBehaviour
         UIHelper.OnBackButtonClickListener("MainMenu");
 
         characterRb.velocity = new Vector2(3, characterRb.velocity.y);
+        onGround = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, whatIsGround);
     }
 }
