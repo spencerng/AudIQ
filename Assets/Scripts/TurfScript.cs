@@ -4,23 +4,27 @@ using UnityEngine;
 
 public class TurfScript : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+
+    Rigidbody2D turfRb;
+
+    private void Start()
     {
+        turfRb = gameObject.GetComponent<Rigidbody2D>();
         
     }
 
-    // Update is called once per frame
+
     void Update()
     {
-        
+        turfRb.velocity = new Vector2(-50, turfRb.velocity.y);
     }
 
-    private void OnTriggerEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Eraser")
         {
             Destroy(gameObject);
+            Debug.Log("Turf destroyed");
         }
     }
 }

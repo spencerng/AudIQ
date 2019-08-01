@@ -13,7 +13,7 @@ public class PitchDiscriminationGameScript : MonoBehaviour
 
     void Start()
     {
-        characterRb = GameObject.Find("player").GetComponent<Rigidbody2D>();
+        characterRb = GameObject.Find("Player").GetComponent<Rigidbody2D>();
         groundCheck = GameObject.Find("Ground Check").GetComponent<Transform>();
         groundCheckRadius = 0.2f;
         Instantiate(turf, new Vector2(-1, -3), gameObject.transform.rotation);
@@ -23,11 +23,12 @@ public class PitchDiscriminationGameScript : MonoBehaviour
     {
         UIHelper.OnBackButtonClickListener("MainMenu");
 
-        characterRb.velocity = new Vector2(8, characterRb.velocity.y);
+
         onGround = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, whatIsGround);
+        
         if (Input.GetKey(KeyCode.Space) && onGround)
         {
-            characterRb.velocity = new Vector2(characterRb.velocity.x, 50);
+            characterRb.velocity = new Vector2(characterRb.velocity.x, 300);
         }
     }
 
