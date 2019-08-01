@@ -19,8 +19,8 @@ internal class SpeechInNoiseGameScript : JeopardySceneScript //NOTE: I made it i
     private readonly CanvasGroup correctIncorrectPanelCg;
 
     private Button[] wordButtons;
-    private AudioObj[] audioObjs;
-    private AudioObj readyFile;
+    private AudioPlayer[] audioObjs;
+    private AudioPlayer readyFile;
 
     //TO-DO: Will need to make method interacting with database, GetAudioFiles();
 
@@ -28,7 +28,7 @@ internal class SpeechInNoiseGameScript : JeopardySceneScript //NOTE: I made it i
     {
         Screen.orientation = ScreenOrientation.LandscapeLeft;
         wordButtons = new Button[12];
-        audioObjs = new AudioObj[12];
+        audioObjs = new AudioPlayer[12];
 
         numTrial = 1; //WILL HAVE TO COMMENT THIS OUT AFTER WE HAVE 25 TRIALS
         //numTrial = SpeechInNoiseTrialNum; //SpeechInNoiseTrialNum is public static, from JeopardySceneScript
@@ -44,10 +44,10 @@ internal class SpeechInNoiseGameScript : JeopardySceneScript //NOTE: I made it i
         //TO-DO: Will need to turn this into a method at a later date, GetAudioFiles();
         // Has length of 13; element 0 is "ready"
         AudioSource[] audioSources = GetComponents<AudioSource>();
-        readyFile = new AudioObj(audioSources[0]);
+        readyFile = new AudioPlayer(audioSources[0]);
         for (int i = 1; i < audioSources.Length; i++)
         {
-            audioObjs[i - 1] = new AudioObj(audioSources[i]);
+            audioObjs[i - 1] = new AudioPlayer(audioSources[i]);
         }
 
         //Done so original button text doesn't appear on the screen
@@ -99,7 +99,7 @@ internal class SpeechInNoiseGameScript : JeopardySceneScript //NOTE: I made it i
         AssignButtonOptions();
         RetrieveCorrectAnswers();
 
-        readyFile.GetAudioSource().PlayOneShot(readyFile.GetAudioClip());
+        readyFile.Play();
         yield return new WaitForSeconds(1f);
 
         //plays clip, trial 1 corresponds to index 0

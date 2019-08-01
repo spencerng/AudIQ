@@ -13,7 +13,7 @@ public class SoundLocalizationGameScript : MonoBehaviour
     private Button buttonRight;
 
     //for now we have two trials, change later
-    private AudioObj[] audioObjs;
+    private AudioPlayer[] audioObjs;
 
     //I just made booleans so that the Update frame plays animations, perhaps a better way is to play a method for a set # of seconds
     private bool playLeftAnimation;
@@ -32,7 +32,7 @@ public class SoundLocalizationGameScript : MonoBehaviour
     {
         Screen.orientation = ScreenOrientation.Portrait;
 
-        audioObjs = new AudioObj[2];
+        audioObjs = new AudioPlayer[2];
         numTrial = 1;
 
         chickyTopTransform = GameObject.Find("chicky_T").GetComponent<Transform>();
@@ -50,7 +50,7 @@ public class SoundLocalizationGameScript : MonoBehaviour
 
         for (int i = 0; i < audioSources.Length; i++)
         {
-            audioObjs[i] = new AudioObj(audioSources[i]);
+            audioObjs[i] = new AudioPlayer(audioSources[i]);
         }
 
        
