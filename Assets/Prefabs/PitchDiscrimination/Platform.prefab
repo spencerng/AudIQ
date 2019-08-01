@@ -309,8 +309,9 @@ GameObject:
   - component: {fileID: 8692806283172600438}
   - component: {fileID: 4728605373518092764}
   - component: {fileID: 6536494634313535917}
+  - component: {fileID: 3521505660261899874}
   m_Layer: 0
-  m_Name: Turf
+  m_Name: Platform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -448,6 +449,20 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 6
+--- !u!114 &3521505660261899874
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2955463662709235351}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85f7873aba147a24d9d8d8629c509a77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  turf: {fileID: 2955463662709235351}
+  player: {fileID: 0}
 --- !u!1 &6677049003427054560
 GameObject:
   m_ObjectHideFlags: 0

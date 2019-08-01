@@ -6,6 +6,7 @@ public class TurfScript : MonoBehaviour
 {
 
     Rigidbody2D turfRb;
+    public GameObject turf, player;
 
     private void Start()
     {
@@ -25,6 +26,7 @@ public class TurfScript : MonoBehaviour
         {
             Destroy(gameObject);
             Debug.Log("Turf destroyed");
+            
         }
     }
 }

@@ -11,12 +11,16 @@ public class PitchDiscriminationGameScript : MonoBehaviour
     private bool onGround;
     public GameObject turf;
 
+    int frameCount;
+
     void Start()
     {
         characterRb = GameObject.Find("Player").GetComponent<Rigidbody2D>();
         groundCheck = GameObject.Find("Ground Check").GetComponent<Transform>();
         groundCheckRadius = 0.2f;
-        Instantiate(turf, new Vector2(-1, -3), gameObject.transform.rotation);
+        frameCount = -100;
+        
+        
     }
 
     void Update()
@@ -30,6 +34,22 @@ public class PitchDiscriminationGameScript : MonoBehaviour
         {
             characterRb.velocity = new Vector2(characterRb.velocity.x, 300);
         }
+
+        frameCount++;
+
+        Debug.Log(frameCount);
+
+        if (frameCount >= 300)
+        {
+            frameCount = 0;
+           
+            GameObject newPlatform = Instantiate(turf, new Vector2(1200, 250), characterRb.transform.rotation);
+            newPlatform.AddComponent<TurfScript>();
+            newPlatform = Instantiate(turf, new Vector2(1200, -250), characterRb.transform.rotation);
+            newPlatform.AddComponent<TurfScript>();
+        }
+
+        
     }
 
 
