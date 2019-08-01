@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4286722573832466918}
   - component: {fileID: 8692806283172600438}
   - component: {fileID: 4728605373518092764}
+  - component: {fileID: 7550316795800160242}
   m_Layer: 0
   m_Name: turf
   m_TagString: Untagged
@@ -126,3 +127,15 @@ PlatformEffector2D:
   m_UseSideFriction: 0
   m_UseSideBounce: 0
   m_SideArc: 1
+--- !u!114 &7550316795800160242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2955463662709235351}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85f7873aba147a24d9d8d8629c509a77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
