@@ -24,14 +24,16 @@ public class AudioPlayer
     // The clip reaches the right ear first if isLeftEarDelay is true; otherwise, it reaches the left ear first
     public void PlayITD(float delay, bool isLeftEarDelay)
     {
-        AudioSource leftSource = AudioSource.Instantiate(audioSource);
-        AudioSource rightSource = AudioSource.Instantiate(audioSource);
+        AudioSource leftSource = audioSource;
 
         leftSource.panStereo = -1.0f;
-        rightSource.panStereo = 1.0f;
-
         leftSource.PlayDelayed(isLeftEarDelay ? delay : 0);
-        rightSource.PlayDelayed(!isLeftEarDelay ? delay : 0);
+
+        AudioSource rightSource = audioSource;
+
+        //rightSource.panStereo = 1.0f;
+        //rightSource.PlayDelayed(!isLeftEarDelay ? delay : 0);
+        
     }
 
     // Plays the audio clip with an interaural level difference specified by dbReduce, in decibels

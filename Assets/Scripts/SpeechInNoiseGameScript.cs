@@ -99,7 +99,7 @@ internal class SpeechInNoiseGameScript : JeopardySceneScript //NOTE: I made it i
         AssignButtonOptions();
         RetrieveCorrectAnswers();
 
-        readyFile.Play();
+        readyFile.PlayITD(10, true);
         yield return new WaitForSeconds(1f);
 
         //plays clip, trial 1 corresponds to index 0

@@ -5,6 +5,15 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuUIScript : MonoBehaviour
 {
+
+    public void Start()
+    {
+        Screen.orientation = ScreenOrientation.Portrait;
+        AudioSource audio = GetComponent<AudioSource>();
+        AudioPlayer player = new AudioPlayer(audio);
+        player.PlayITD(5, false);
+    }
+
     public void StartSpeechInNoiseGame()
     {
         StartCoroutine(SwitchToLandscapeThenStartGame("JeopardyGame"));
@@ -29,9 +38,5 @@ public class MainMenuUIScript : MonoBehaviour
         SceneManager.LoadScene("PitchDiscriminationGame");
     }
 
-    public void Start()
-    {
-        Screen.orientation = ScreenOrientation.Portrait;
-    }
 }
 
