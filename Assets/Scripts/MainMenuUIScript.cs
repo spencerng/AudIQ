@@ -9,9 +9,15 @@ public class MainMenuUIScript : MonoBehaviour
     public void Start()
     {
         Screen.orientation = ScreenOrientation.Portrait;
-        AudioSource audio = GetComponent<AudioSource>();
+        AudioTest();
+    }
+
+
+    private void AudioTest()
+    {
+        AudioSource audio = GameObject.Find("AudioManager").GetComponent<AudioSource>();
         AudioPlayer player = new AudioPlayer(audio);
-        player.PlayITD(5, false);
+        player.PlaySoundLocalization(60.0f);
     }
 
     public void StartSpeechInNoiseGame()
