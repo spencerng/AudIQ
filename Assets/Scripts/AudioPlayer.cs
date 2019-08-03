@@ -18,7 +18,7 @@ public class AudioPlayer
     public readonly static float MAX_ITD_SEC = 0.0007f;
     private static float BASELINE_LINEAR_VOL;
 
-    public AudioPlayer(AudioSource audioSource)
+    public AudioPlayer(AudioSource audioSource, float offsetAngle = 0.0f)
     {
         this.audioSource = audioSource;
         audioClip = audioSource.clip;
@@ -27,6 +27,7 @@ public class AudioPlayer
         BASELINE_LINEAR_VOL = Mathf.Pow(10, -MAX_ILD_DB / 20); 
 
         Reset();
+        SetOffsetAngle(offsetAngle);
     }
 
     public void Reset()
