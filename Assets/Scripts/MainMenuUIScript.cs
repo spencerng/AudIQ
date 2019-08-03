@@ -17,7 +17,8 @@ public class MainMenuUIScript : MonoBehaviour
     {
         AudioSource audio = GameObject.Find("AudioManager").GetComponent<AudioSource>();
         AudioPlayer player = new AudioPlayer(audio);
-        player.PlaySoundLocalization(-45.0f);
+        player.SetOffsetAngle(30.0f);
+        player.Play();
     }
 
     public void StartSpeechInNoiseGame()
