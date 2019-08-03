@@ -12,7 +12,11 @@ public class MainMenuUIScript : MonoBehaviour
     public void Start()
     {
         Screen.orientation = ScreenOrientation.Portrait;
-        AudioTest();
+        //AudioTest();
+
+        AudioSource audio = GameObject.Find("AudioManager").GetComponent<AudioSource>();
+        player = new AudioPlayer(audio);
+        player.playAlteredPitch(1.5f);
     }
 
 
@@ -28,6 +32,10 @@ public class MainMenuUIScript : MonoBehaviour
     {
         Slider slider = GameObject.Find("Slider").GetComponent<Slider>();
         player.SetOffsetAngle(-slider.value);
+
+        Slider sliderPitch = GameObject.Find("Slider (1)").GetComponent<Slider>();
+        player.SetAlteredPitch(sliderPitch.value);
+
     }
 
     public void StartSpeechInNoiseGame()

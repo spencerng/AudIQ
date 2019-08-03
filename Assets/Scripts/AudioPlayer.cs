@@ -18,7 +18,10 @@ public class AudioPlayer
     public readonly static float MAX_ITD_SEC = 0.0007f;
     private static float BASELINE_LINEAR_VOL;
 
-    public AudioPlayer(AudioSource audioSource, float offsetAngle = 0.0f)
+    private static float originalPitch;
+    private AudioSource modifiedPitch;
+
+    public AudioPlayer(AudioSource audioSource, float offsetAngle = 0.0f, float originalPitch = 200f)
     {
         this.audioSource = audioSource;
         audioClip = audioSource.clip;
@@ -27,7 +30,34 @@ public class AudioPlayer
         BASELINE_LINEAR_VOL = Mathf.Pow(10, -MAX_ILD_DB / 20); 
 
         Reset();
-        SetOffsetAngle(offsetAngle);
+        //SetOffsetAngle(offsetAngle);
+    }
+
+    public void playAlteredPitch(float newPitchRatio)
+    {
+        modifiedPitch = AudioSource.Instantiate(audioSource);
+
+        if (newPitchRatio > 5f)
+            newPitchRatio = 5;
+        if (newPitchRatio < 0.000001f)
+            newPitchRatio = 0.000001f;
+
+        modifiedPitch.pitch = newPitchRatio;
+
+        modifiedPitch.Play();
+
+        /*
+        Or, if we use newPitch:
+        float ratio = newPitch / originalPitch;
+        if (ratio > 5)
+            ratio = 5;
+        higherPitched.pitch = newPitch / originalPitch;
+        */
+    }
+
+    public void SetAlteredPitch(float newPitch)
+    {
+        modifiedPitch.pitch = newPitch;
     }
 
     public void Reset()
