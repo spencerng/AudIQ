@@ -15,7 +15,7 @@ public class AudioPlayer
     private float offsetAngle;
 
     public readonly static float MAX_ILD_DB = 15.0f;
-    public readonly static float MAX_ITD_SEC = 0.00066f;
+    public readonly static float MAX_ITD_SEC = 0.0007f;
     private static float BASELINE_LINEAR_VOL;
 
     public AudioPlayer(AudioSource audioSource)
@@ -67,18 +67,28 @@ public class AudioPlayer
     // The clip reaches the right ear first if isLeftEarDelay is true; otherwise, it reaches the left ear first
     public void CreateITD(float itdSec, bool isLeftEarDelay)
     {
+        float currentITD = Mathf.Abs(leftSource.time - rightSource.time);
+
         if (leftSource.time < rightSource.time)
         {
-            leftSource.time = rightSource.time;
+            leftSource.time += currentITD / 2;
+            rightSource.time -= currentITD / 2;
         }
         else
         {
-            rightSource.time = leftSource.time;
+            leftSource.time -= currentITD / 2;
+            rightSource.time += currentITD / 2;
         }
 
+        // Splits ITD between both channels to fix high-frequency popping
         AudioSource ahead = !isLeftEarDelay ? leftSource : rightSource;
+        AudioSource behind = isLeftEarDelay ? leftSource : rightSource;
 
-        ahead.time += itdSec;
+        // Check so that time is not assigned a negative value
+        float newBehindTime = Mathf.Max(0.0f, behind.time - itdSec / 2);
+
+        ahead.time += itdSec - (behind.time - newBehindTime);
+        behind.time = newBehindTime;
     }
 
     public void Play()
