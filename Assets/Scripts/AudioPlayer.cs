@@ -9,7 +9,7 @@ public class AudioPlayer
     private readonly AudioClip audioClip;
     private bool correctlyAnswered;
 
-    public readonly static float MAX_ILD_DB = 0.5f;
+    public readonly static float MAX_ILD_DB = 15.0f;
     public readonly static float MAX_ITD_SEC = 0.00066f;
 
     public AudioPlayer(AudioSource audioSource)
