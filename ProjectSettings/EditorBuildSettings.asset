@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/JeopardyGame.unity
     guid: f88f6b548efffdf42ae4065144d5638f
+  - enabled: 1
+    path: Assets/Scenes/TouchGame.unity
+    guid: 5a8fcb6c1889aee4c9fc4d3ccfe773ce
   m_configObjects: {}

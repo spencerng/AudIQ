@@ -16,7 +16,6 @@ public class MainMenuUIScript : MonoBehaviour
 
         AudioSource audio = GameObject.Find("AudioManager").GetComponent<AudioSource>();
         player = new AudioPlayer(audio);
-        player.playAlteredPitch(1.5f);
     }
 
 
@@ -60,6 +59,11 @@ public class MainMenuUIScript : MonoBehaviour
     {
 
         SceneManager.LoadScene("PitchDiscriminationGame");
+    }
+
+    public void StartTouchGame()
+    {
+        SceneManager.LoadScene("TouchGame");
     }
 
 }

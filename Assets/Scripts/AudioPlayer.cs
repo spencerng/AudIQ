@@ -33,7 +33,8 @@ public class AudioPlayer
         //SetOffsetAngle(offsetAngle);
     }
 
-    public void playAlteredPitch(float newPitchRatio)
+    /*
+    public void PlayAlteredPitch(float newPitchRatio)
     {
         modifiedPitch = AudioSource.Instantiate(audioSource);
 
@@ -46,18 +47,20 @@ public class AudioPlayer
 
         modifiedPitch.Play();
 
-        /*
-        Or, if we use newPitch:
-        float ratio = newPitch / originalPitch;
-        if (ratio > 5)
-            ratio = 5;
-        higherPitched.pitch = newPitch / originalPitch;
-        */
+        
+        //Or, if we use newPitch:
+        //float ratio = newPitch / originalPitch;
+        //if (ratio > 5)
+            //ratio = 5;
+        //higherPitched.pitch = newPitch / originalPitch;
+      
     }
+    */
 
     public void SetAlteredPitch(float newPitch)
     {
-        modifiedPitch.pitch = newPitch;
+        leftSource.pitch = newPitch;
+        rightSource.pitch = newPitch;
     }
 
     public void Reset()
