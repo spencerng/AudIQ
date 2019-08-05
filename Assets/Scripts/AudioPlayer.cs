@@ -66,6 +66,11 @@ public class AudioPlayer
 
         louder.volume = Mathf.Pow(10, gain / 10) * BASELINE_LINEAR_VOL;
         softer.volume = Mathf.Pow(10, -gain / 10) * BASELINE_LINEAR_VOL;
+
+        float ratio = softer.volume / (louder.volume + softer.volume);
+
+        louder.volume = (1 - ratio) * BASELINE_LINEAR_VOL;
+        softer.volume = ratio * BASELINE_LINEAR_VOL;
     }
 
     // Plays the audio clip with an interaural time difference specified by itdSec, in seconds. 
