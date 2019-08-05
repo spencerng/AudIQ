@@ -12,20 +12,11 @@ public class MainMenuUIScript : MonoBehaviour
     public void Start()
     {
         Screen.orientation = ScreenOrientation.Portrait;
-        //AudioTest();
-
+    
         AudioSource audio = GameObject.Find("AudioManager").GetComponent<AudioSource>();
         player = new AudioPlayer(audio);
-    }
-
-
-    private void AudioTest()
-    {
-        AudioSource audio = GameObject.Find("AudioManager").GetComponent<AudioSource>();
-        player = new AudioPlayer(audio);
-        player.SetOffsetAngle(90.0f);
         player.Play();
-    }
+    }   
 
     public void Update()
     {
