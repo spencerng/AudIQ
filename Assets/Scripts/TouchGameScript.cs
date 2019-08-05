@@ -61,7 +61,7 @@ public class TouchGameScript : MonoBehaviour
                 {
                     //Question: How much should moving the finger across the screen alter the touch (ie, how big is the pitch range we're trying to test?)
 
-                    pitchFactor = pitchFactor + latestTouch.deltaPosition.y / Screen.height / 1.1f; 
+                    pitchFactor = pitchFactor + latestTouch.deltaPosition.y / Screen.height / 1.4f; 
                     //1.1 is for attenuation; will probably need algorithm for proper attenuation
                     if (pitchFactor < 0) //song starts playing backwards
                         pitchFactor = 0.05f;
