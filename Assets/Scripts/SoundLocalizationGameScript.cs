@@ -46,7 +46,7 @@ public class SoundLocalizationGameScript : MonoBehaviour
         originalChickyRightPosition = chickyRightTransform.position;
         originalChickyTopPosition = chickyTopTransform.position;
 
-        AudioSource[] audioSources = GetComponents<AudioSource>();
+        AudioSource[] audioSources = GameObject.Find("AudioManager").GetComponents<AudioSource>();
 
         for (int i = 0; i < audioSources.Length; i++)
         {
@@ -104,6 +104,7 @@ public class SoundLocalizationGameScript : MonoBehaviour
         {
 
             playLeftAnimation = isLeftButton;
+            playRightAnimation = !isLeftButton;
 
             bool correctlyAnswered = audioObjs[indexForTrial].GetCorrectAnswer() == (isLeftButton ? "left" : "right");
 
@@ -138,7 +139,7 @@ public class SoundLocalizationGameScript : MonoBehaviour
         if (playTopAnimation && UIHelper.Translate(chickyTopTransform, new Vector3(0, -1f), originalChickyTopPosition + new Vector3(0, -150f)))
         {
             playTopAnimation = false;
-            chickyTopTransform.position = originalChickyTopPosition;
+            //chickyTopTransform.position = originalChickyTopPosition;
         }
 
         //Left animation

@@ -30,8 +30,11 @@ internal class SpeechInNoiseGameScript : JeopardySceneScript //NOTE: I made it i
         wordButtons = new Button[12];
         audioObjs = new AudioPlayer[12];
 
-        numTrial = 1; //WILL HAVE TO COMMENT THIS OUT AFTER WE HAVE 25 TRIALS
-        //numTrial = SpeechInNoiseTrialNum; //SpeechInNoiseTrialNum is public static, from JeopardySceneScript
+        //numTrial = 1; //WILL HAVE TO COMMENT THIS OUT AFTER WE HAVE 25 TRIALS
+        numTrial = SpeechInNoiseTrialNum; //SpeechInNoiseTrialNum is public static, from JeopardySceneScript
+
+        if (numTrial > 12)
+            numTrial = 12;
 
         //SpeechInNoiseTrialNum IS FROM JEOPARDYSCENE, HAS NOT BEEN DESTROYED
 
@@ -43,7 +46,7 @@ internal class SpeechInNoiseGameScript : JeopardySceneScript //NOTE: I made it i
 
         //TO-DO: Will need to turn this into a method at a later date, GetAudioFiles();
         // Has length of 13; element 0 is "ready"
-        AudioSource[] audioSources = GetComponents<AudioSource>();
+        AudioSource[] audioSources = GameObject.Find("AudioManager").GetComponents<AudioSource>();
         readyFile = new AudioPlayer(audioSources[0]);
         for (int i = 1; i < audioSources.Length; i++)
         {
