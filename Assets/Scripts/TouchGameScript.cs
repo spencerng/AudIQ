@@ -67,7 +67,7 @@ public class TouchGameScript : MonoBehaviour
                         pitchFactor = 0.05f;
 
                     if (Mathf.Abs(pitchFactor) > 0.05f)
-                        player.SetAlteredPitch(pitchFactor);
+                        player.SetPitch(pitchFactor);
                 }
 
                 Debug.Log(pitchFactor);

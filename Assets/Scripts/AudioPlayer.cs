@@ -11,27 +11,28 @@ public class AudioPlayer
     private AudioSource leftSource, rightSource;
     private readonly AudioClip audioClip;
 
-    private readonly float ild, itd;
+    private float ild, itd;
     private float offsetAngle;
+    private float pitch;
 
     public static readonly float MAX_ILD_DB = 15.0f;
     public static readonly float MAX_ITD_SEC = 0.0007f;
     private static float BASELINE_LINEAR_VOL;
 
-    private readonly float originalPitch;
+    
 
-    public AudioPlayer(AudioSource audioSource, float offsetAngle = 0.0f, float originalPitch = 200f)
+    public AudioPlayer(AudioSource audioSource, float offsetAngle = 0.0f, float pitch = 1.0f)
     {
         this.audioSource = audioSource;
         audioClip = audioSource.clip;
 
-        this.originalPitch = originalPitch;
-
         // Set baseline volume so that ILD never goes out of Unity's volume range of [0.0, 1.0]
         BASELINE_LINEAR_VOL = Mathf.Pow(10, -MAX_ILD_DB / 20);
 
+
         Reset();
-        SetOffsetAngle(offsetAngle);
+        //SetOffsetAngle(offsetAngle);
+       // SetPitch(pitch);
     }
 
     public void Reset()
@@ -48,8 +49,8 @@ public class AudioPlayer
         bool isTowardsLeft = offsetAngle > 0.0;
 
         float angleMap = 0.5f - offsetAngle / 90 / 2.22f;
-        float ild = Mathf.Abs(Mathf.Log(angleMap / (1 - angleMap)) * MAX_ILD_DB / 3);
-        float itd = Mathf.Abs(Mathf.Log(angleMap / (1 - angleMap)) * MAX_ITD_SEC / 3);
+        ild = Mathf.Abs(Mathf.Log(angleMap / (1 - angleMap)) * MAX_ILD_DB / 3);
+        itd = Mathf.Abs(Mathf.Log(angleMap / (1 - angleMap)) * MAX_ITD_SEC / 3);
 
         CreateILD(ild, isTowardsLeft);
         CreateITD(itd, !isTowardsLeft);
@@ -108,10 +109,18 @@ public class AudioPlayer
         rightSource.Play();
     }
 
-    public void SetAlteredPitch(float newPitch)
+    // Sets the pitch based on Unity's AudioMixer pitch shifter effect
+    // 0.5 lowers the clip by one octave, 1.0 is the baseline, while 2.0 increases the clip by one octave
+    public void SetPitch(float pitch)
     {
-        leftSource.pitch = newPitch;
-        rightSource.pitch = newPitch;
+        this.pitch = pitch;
+        leftSource.outputAudioMixerGroup.audioMixer.SetFloat("Pitch", pitch);
+        rightSource.outputAudioMixerGroup.audioMixer.SetFloat("Pitch", pitch);
+    }
+
+    public float GetPitch()
+    {
+        return pitch;
     }
 
     // A positive offset means the source is to the left relative to the midline
