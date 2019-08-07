@@ -74,9 +74,10 @@ internal class SpeechInNoiseGameScript : JeopardySceneScript //NOTE: I made it i
             bool isCorrect = wordButtons[buttonNum].GetComponentInChildren<Text>().text == audioObjs[numTrial - 1].GetCorrectAnswer();
 
             if (isCorrect)
-            {
-                score = score + 100 + 100*((SpeechInNoiseTrialNum - 1) % 5); //For example, pressing button5 = trial 5, 100 + 100*(4 % 5)
-            }
+                score = score + 100 + 100 * ((SpeechInNoiseTrialNum - 1) % 5); //For example, pressing button5 = trial 5, 100 + 100*(4 % 5)
+            else
+                score = 0;
+
             audioObjs[numTrial - 1].SetCorrectlyAnswered(isCorrect);
 
             StartCoroutine(UIHelper.FlashCorrectIncorrectScreen(isCorrect));
