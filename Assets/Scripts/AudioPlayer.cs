@@ -18,25 +18,20 @@ public class AudioPlayer
     public readonly static float MAX_ITD_SEC = 0.0007f;
     private static float BASELINE_LINEAR_VOL;
 
-    private static float originalPitch;
-    private AudioSource modifiedPitch;
+    private float originalPitch;
 
     public AudioPlayer(AudioSource audioSource, float offsetAngle = 0.0f, float originalPitch = 200f)
     {
         this.audioSource = audioSource;
         audioClip = audioSource.clip;
 
+        this.originalPitch = originalPitch;
+
         // Set baseline volume so that ILD never goes out of Unity's volume range of [0.0, 1.0]
         BASELINE_LINEAR_VOL = Mathf.Pow(10, -MAX_ILD_DB / 20); 
 
         Reset();
-        //SetOffsetAngle(offsetAngle);
-    }
-
-    public void SetAlteredPitch(float newPitch)
-    {
-        leftSource.pitch = newPitch;
-        rightSource.pitch = newPitch;
+        SetOffsetAngle(offsetAngle);
     }
 
     public void Reset()
@@ -52,15 +47,15 @@ public class AudioPlayer
 
         bool isTowardsLeft = offsetAngle > 0.0;
 
-        float x = 0.5f - offsetAngle / 90 / 2.22f;
-        float ild = Mathf.Abs(Mathf.Log(x / (1 - x)) * MAX_ILD_DB / 3);
-        float itd = Mathf.Abs(Mathf.Log(x / (1 - x)) * MAX_ITD_SEC / 3);
+        float angleMap = 0.5f - offsetAngle / 90 / 2.22f;
+        float ild = Mathf.Abs(Mathf.Log(angleMap / (1 - angleMap)) * MAX_ILD_DB / 3);
+        float itd = Mathf.Abs(Mathf.Log(angleMap / (1 - angleMap)) * MAX_ITD_SEC / 3);
 
         CreateILD(ild, isTowardsLeft);
         CreateITD(itd, !isTowardsLeft);
     }
 
-    // Plays the audio clip with an interaural level difference specified by dbReduce, in decibels
+    // Plays the audio clip with an interaural level difference specified by ildDb, in decibels
     // The clip is quiet in the right ear if isLeftEarBaseline is true; otherwise, it is quieter in the left ear
     private void CreateILD(float ildDb, bool isLeftEarLouder)
     {
@@ -78,12 +73,13 @@ public class AudioPlayer
         //softer.volume = ratio * BASELINE_LINEAR_VOL;
     }
 
-    // Plays the audio clip with an interaural time difference specified by delay, in seconds. 
+    // Plays the audio clip with an interaural time difference specified by itdSec, in seconds. 
     // The clip reaches the right ear first if isLeftEarDelay is true; otherwise, it reaches the left ear first
     public void CreateITD(float itdSec, bool isLeftEarDelay)
     {
         float currentITD = Mathf.Abs(leftSource.time - rightSource.time);
 
+        // Resets sources so ITD = 0 again
         if (leftSource.time < rightSource.time)
         {
             leftSource.time += currentITD / 2;
@@ -108,11 +104,14 @@ public class AudioPlayer
 
     public void Play()
     {
-        leftSource.volume = BASELINE_LINEAR_VOL;
-        rightSource.volume = BASELINE_LINEAR_VOL;
-
         leftSource.Play();
         rightSource.Play();
+    }
+
+    public void SetAlteredPitch(float newPitch)
+    {
+        leftSource.pitch = newPitch;
+        rightSource.pitch = newPitch;
     }
 
     // A positive offset means the source is to the left relative to the midline
