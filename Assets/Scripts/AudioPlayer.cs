@@ -19,7 +19,7 @@ public class AudioPlayer
     public static readonly float MAX_ITD_SEC = 0.0007f;
     private static float BASELINE_LINEAR_VOL;
 
-    
+
 
     public AudioPlayer(AudioSource audioSource, float offsetAngle = 0.0f, float pitch = 1.0f)
     {
@@ -31,8 +31,8 @@ public class AudioPlayer
 
 
         Reset();
-        //SetOffsetAngle(offsetAngle);
-       // SetPitch(pitch);
+        SetOffsetAngle(offsetAngle);
+        SetPitch(pitch);
     }
 
     public void Reset()
