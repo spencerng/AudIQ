@@ -16,6 +16,8 @@ public class MainMenuUIScript : MonoBehaviour
         AudioSource audio = GameObject.Find("AudioManager").GetComponent<AudioSource>();
         player = new AudioPlayer(audio);
         player.Play();
+
+        GameObject.Find("Dummyaudio").GetComponent<AudioSource>().Play();
     }   
 
     public void Update()
