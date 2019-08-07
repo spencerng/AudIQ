@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 //Public class for an object storing an audio file and a correct answer
-public class AudioPlayer 
+public class AudioPlayer
 {
 
     private string correctAnswer;
@@ -11,14 +11,14 @@ public class AudioPlayer
     private AudioSource leftSource, rightSource;
     private readonly AudioClip audioClip;
 
-    private float ild, itd;
+    private readonly float ild, itd;
     private float offsetAngle;
 
-    public readonly static float MAX_ILD_DB = 15.0f;
-    public readonly static float MAX_ITD_SEC = 0.0007f;
+    public static readonly float MAX_ILD_DB = 15.0f;
+    public static readonly float MAX_ITD_SEC = 0.0007f;
     private static float BASELINE_LINEAR_VOL;
 
-    private float originalPitch;
+    private readonly float originalPitch;
 
     public AudioPlayer(AudioSource audioSource, float offsetAngle = 0.0f, float originalPitch = 200f)
     {
@@ -28,7 +28,7 @@ public class AudioPlayer
         this.originalPitch = originalPitch;
 
         // Set baseline volume so that ILD never goes out of Unity's volume range of [0.0, 1.0]
-        BASELINE_LINEAR_VOL = Mathf.Pow(10, -MAX_ILD_DB / 20); 
+        BASELINE_LINEAR_VOL = Mathf.Pow(10, -MAX_ILD_DB / 20);
 
         Reset();
         SetOffsetAngle(offsetAngle);

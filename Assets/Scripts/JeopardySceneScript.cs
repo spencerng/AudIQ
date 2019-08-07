@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 
 //TO-DO: NEED TO DESTROY THE SCENE IF THEY GO BACK (IE, CUSTOM BACK BUTTON SCRIPT) OR IF THEY'RE DONE
@@ -20,7 +19,7 @@ public class JeopardySceneScript : MonoBehaviour
     public static int score;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         optionButtons = new Button[25];
         transforms = new RectTransform[25];
@@ -36,19 +35,20 @@ public class JeopardySceneScript : MonoBehaviour
         }
 
         //Set GUI
-        for (int columnNum = 0; columnNum < 5; columnNum++) {
+        for (int columnNum = 0; columnNum < 5; columnNum++)
+        {
             GameObject.Find("ButtonCat" + columnNum).GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Screen.height / 12);
             GameObject.Find("ButtonCat" + columnNum).GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Screen.width / 5);
-            GameObject.Find("ButtonCat" + columnNum).GetComponent<RectTransform>().position = new Vector3(Screen.width / 5 * columnNum, Screen.height * 11/24, 0);
+            GameObject.Find("ButtonCat" + columnNum).GetComponent<RectTransform>().position = new Vector3(Screen.width / 5 * columnNum, Screen.height * 11 / 24, 0);
 
             for (int rowNum = 0; rowNum < 5; rowNum++)
             {
                 transforms[5 * columnNum + rowNum].SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Screen.height / 12);
                 transforms[5 * columnNum + rowNum].SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Screen.width / 5);
-                transforms[5*columnNum + rowNum].position = new Vector3(Screen.width / 5 * columnNum, (Screen.height / 12 * (5 - rowNum)) - (Screen.height / 12), 0);
+                transforms[5 * columnNum + rowNum].position = new Vector3(Screen.width / 5 * columnNum, (Screen.height / 12 * (5 - rowNum)) - (Screen.height / 12), 0);
             }
         }
-        
+
 
         SetOptionButtonListeners();
 
@@ -83,12 +83,12 @@ public class JeopardySceneScript : MonoBehaviour
         pressedButton = buttonNum;
         SpeechInNoiseTrialNum = pressedButton + 1; //ie, pressing Button1 activates Trial 1 (+1 is since Button1 is optionButton[0])
 
-        DontDestroyOnLoad(this.gameObject); //NOT DESTROYING THE GAME OBJECT ALLOWS THE SPEECHINNOISEGAMESCRIPT TO USE THE VALUE FOR SpeechInNoiseTrialNum
+        DontDestroyOnLoad(gameObject); //NOT DESTROYING THE GAME OBJECT ALLOWS THE SPEECHINNOISEGAMESCRIPT TO USE THE VALUE FOR SpeechInNoiseTrialNum
         SceneManager.LoadScene("SpeechInNoiseGame");
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         UIHelper.OnBackButtonClickListener("MainMenu");
     }

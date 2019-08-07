@@ -53,10 +53,10 @@ public class SoundLocalizationGameScript : MonoBehaviour
             audioObjs[i] = new AudioPlayer(audioSources[i]);
         }
 
-       
+
 
         playTopAnimation = true;
-    
+
         StartCoroutine(StartTrial(numTrial));
     }
 

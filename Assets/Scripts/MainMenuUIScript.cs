@@ -1,24 +1,22 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MainMenuUIScript : MonoBehaviour
 {
-
-    AudioPlayer player;
+    private AudioPlayer player;
 
     public void Start()
     {
         Screen.orientation = ScreenOrientation.Portrait;
-    
+
         AudioSource audio = GameObject.Find("AudioManager").GetComponent<AudioSource>();
         player = new AudioPlayer(audio);
         player.Play();
 
         GameObject.Find("Dummyaudio").GetComponent<AudioSource>().Play();
-    }   
+    }
 
     public void Update()
     {

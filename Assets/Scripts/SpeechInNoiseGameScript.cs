@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 
 internal class SpeechInNoiseGameScript : JeopardySceneScript //NOTE: I made it inherit the protected int numButton from JeopardySceneScript
@@ -75,7 +75,7 @@ internal class SpeechInNoiseGameScript : JeopardySceneScript //NOTE: I made it i
 
             if (isCorrect)
             {
-                score = score + 100 + 100*((SpeechInNoiseTrialNum - 1) % 5); //For example, pressing button5 = trial 5, 100 + 100*(4 % 5)
+                score = score + 100 + 100 * ((SpeechInNoiseTrialNum - 1) % 5); //For example, pressing button5 = trial 5, 100 + 100*(4 % 5)
             }
             audioObjs[numTrial - 1].SetCorrectlyAnswered(isCorrect);
 
@@ -88,7 +88,7 @@ internal class SpeechInNoiseGameScript : JeopardySceneScript //NOTE: I made it i
 
         if (numTrial <= audioObjs.Length)
         {
-            DontDestroyOnLoad(this.gameObject); //Need this so that the data in the invisibleButtons List does not get deleted
+            DontDestroyOnLoad(gameObject); //Need this so that the data in the invisibleButtons List does not get deleted
             //Initial pause to allow the Correct/Incorrect flash to finish
             yield return new WaitForSeconds(0.7f);
             SceneManager.LoadScene("JeopardyGame");

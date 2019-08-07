@@ -1,21 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class TurfScript : MonoBehaviour
 {
-
-    Rigidbody2D turfRb;
+    private Rigidbody2D turfRb;
     public GameObject turf, player;
 
     private void Start()
     {
         turfRb = gameObject.GetComponent<Rigidbody2D>();
-        
+
     }
 
-
-    void Update()
+    private void Update()
     {
         turfRb.velocity = new Vector2(-50, turfRb.velocity.y);
     }
@@ -26,7 +22,7 @@ public class TurfScript : MonoBehaviour
         {
             Destroy(gameObject);
             Debug.Log("Turf destroyed");
-            
+
         }
     }
 }
