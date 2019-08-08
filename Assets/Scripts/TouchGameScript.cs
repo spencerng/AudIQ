@@ -63,8 +63,7 @@ public class TouchGameScript : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-
-        if (Input.touchCount > 0 && !lockTouch)
+        if ((Input.touchCount > 0 && !lockTouch) && (Input.GetTouch(Input.touchCount - 1).position.y > Screen.height * 150f / 1053))
         {
             Touch latestTouch = Input.GetTouch(Input.touchCount - 1);
             if (latestTouch.phase == TouchPhase.Moved)
