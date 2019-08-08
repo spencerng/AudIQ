@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TouchGameScript : MonoBehaviour
 {
@@ -13,6 +14,18 @@ public class TouchGameScript : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
+        Button playSample = GameObject.Find("PlaySample").GetComponent<Button>();
+        Button confirm = GameObject.Find("Confirm").GetComponent<Button>();
+
+        playSample.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Screen.height * (125f / 1053));
+        confirm.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Screen.height * (125f / 1053));
+
+        playSample.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Screen.width * (250f / 592f));
+        confirm.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Screen.width * (250f / 592f));
+
+        playSample.GetComponent<RectTransform>().position = new Vector3(Screen.width * (1.5f / 6), Screen.height * 100f / 1053, 0);
+        confirm.GetComponent<RectTransform>().position = new Vector3(Screen.width * 4.5f / 6, Screen.height * 100f / 1053, 0);
+
 
 
         PlaySampleAudio();
