@@ -11,7 +11,7 @@ public class MainMenuUIScript : MonoBehaviour
     {
         Screen.orientation = ScreenOrientation.Portrait;
 
-        player = new AudioPlayer(GameObject.Find("AudioManager").GetComponent<AudioSource>());
+        player = new AudioPlayer(GameObject.Find("AudioManager").GetComponent<AudioSource>(), 0.0f, 2.0f);
         player.Play();
     }
 
@@ -21,7 +21,7 @@ public class MainMenuUIScript : MonoBehaviour
         player.SetOffsetAngle(-slider.value);
 
         Slider sliderPitch = GameObject.Find("Slider (1)").GetComponent<Slider>();
-        player.SetPitch(sliderPitch.value);
+        //player.SetPitch(sliderPitch.value);
 
     }
 
