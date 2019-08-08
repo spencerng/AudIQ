@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TouchGameScript : MonoBehaviour
 {
     private readonly int numTouches;
     private AudioPlayer player, samplePlayer;
-    private AudioSource audio;
+    private readonly AudioSource audio;
     private float localizationFactor, pitchFactor;
     private bool lockTouch;
     private Transform locationMarkerTransform;
@@ -20,20 +21,34 @@ public class TouchGameScript : MonoBehaviour
     {
         AudioSource audio = GameObject.Find("AudioManager").GetComponent<AudioSource>();
         ResetGame();
-        
+
+        Button playSample = GameObject.Find("PlaySample").GetComponent<Button>();
+        Button confirm = GameObject.Find("Confirm").GetComponent<Button>();
+
+        playSample.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Screen.height * (125f / 1053));
+        confirm.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Screen.height * (125f / 1053));
+
+        playSample.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Screen.width * (250f / 592f));
+        confirm.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Screen.width * (250f / 592f));
+
+        playSample.GetComponent<RectTransform>().position = new Vector3(Screen.width * (1.5f / 6), Screen.height * 100f / 1053, 0);
+        confirm.GetComponent<RectTransform>().position = new Vector3(Screen.width * 4.5f / 6, Screen.height * 100f / 1053, 0);
+
+        PlaySampleAudio();
+
 
         locationMarkerTransform = GameObject.Find("LocationMarker").GetComponent<Transform>();
         locationMarkerSR = GameObject.Find("LocationMarker").GetComponent<SpriteRenderer>();
 
     }
 
-    void ResetGame()
+    private void ResetGame()
     {
         player = new AudioPlayer(audio);
         sampleOffsetAngle = Random.Range(-90f, 90f);
         samplePitch = Random.Range(0.5f, 2.0f);
         PlaySampleAudio();
-        
+
     }
 
     public void ScoreSelection()
@@ -62,8 +77,7 @@ public class TouchGameScript : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-
-        if (Input.touchCount > 0 && !lockTouch)
+        if ((Input.touchCount > 0 && !lockTouch) && (Input.GetTouch(Input.touchCount - 1).position.y > Screen.height * 150f / 1053))
         {
             Touch latestTouch = Input.GetTouch(Input.touchCount - 1);
             if (latestTouch.phase == TouchPhase.Moved)
