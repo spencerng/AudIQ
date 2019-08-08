@@ -402,6 +402,7 @@ MonoBehaviour:
   - 0
   - 0
   source: {fileID: 196937384}
+  timePassed: 0
 --- !u!82 &196937384
 AudioSource:
   m_ObjectHideFlags: 0

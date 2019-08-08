@@ -71,8 +71,8 @@ public class AudioPlayer
 
         float ratio = softer.volume / (louder.volume + softer.volume);
 
-        //louder.volume = (1 - ratio) * BASELINE_LINEAR_VOL;
-        //softer.volume = ratio * BASELINE_LINEAR_VOL;
+        louder.volume = (1 - ratio);
+        softer.volume = ratio;
     }
 
     // Plays the audio clip with an interaural time difference specified by itdSec, in seconds. 
