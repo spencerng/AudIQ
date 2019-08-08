@@ -14,6 +14,7 @@ public class AudioPlayer
     private float ild, itd;
     private float offsetAngle;
     private float pitch;
+    private bool isTowardsLeft;
 
     public static readonly float MAX_ILD_DB = 15.0f;
     public static readonly float MAX_ITD_SEC = 0.0007f;
@@ -46,7 +47,7 @@ public class AudioPlayer
     private void UpdateInterauralDifferences()
     {
 
-        bool isTowardsLeft = offsetAngle > 0.0;
+        isTowardsLeft = offsetAngle > 0.0;
 
         float angleMap = 0.5f - offsetAngle / 90 / 2.22f;
         ild = Mathf.Abs(Mathf.Log(angleMap / (1 - angleMap)) * MAX_ILD_DB / 3);
@@ -107,6 +108,15 @@ public class AudioPlayer
     {
         leftSource.Play();
         rightSource.Play();
+    }
+
+    public void Stop()
+    {
+        leftSource.Stop();
+        rightSource.Stop();
+        leftSource.time = 0.0f;
+        rightSource.time = 0.0f;
+        CreateITD(itd, !isTowardsLeft);
     }
 
     // Sets the pitch based on Unity's AudioMixer pitch shifter effect

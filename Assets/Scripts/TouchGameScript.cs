@@ -7,24 +7,35 @@ public class TouchGameScript : MonoBehaviour
     private int numTouches;
     private AudioPlayer player;
     private float localizationFactor, pitchFactor;
+    private bool lockTouch;
 
     // Start is called before the first frame update
     void Start()
     {
-        
-        AudioSource audio = GameObject.Find("AudioManager").GetComponent<AudioSource>();
-        player = new AudioPlayer(audio);
-        player.Play();
+        lockTouch = true;
+        StartCoroutine(PlayStartingAudio());
 
         localizationFactor = 0f;
         pitchFactor = 1f;
+    }
+
+    private IEnumerator PlayStartingAudio()
+    {
+        AudioSource audio = GameObject.Find("AudioManager").GetComponent<AudioSource>();
+        player = new AudioPlayer(audio);
+        player.Play();
+        yield return new WaitForSeconds(5.0f);
+        player.Stop();
+        yield return new WaitForSeconds(3.0f);
+        player.Play();
+        lockTouch = false;
     }
 
     // Update is called once per frame
     void Update()
     {
 
-        if (Input.touchCount > 0)
+        if (Input.touchCount > 0 && !lockTouch)
         {
             Touch latestTouch = Input.GetTouch(Input.touchCount - 1);
             if (latestTouch.phase == TouchPhase.Moved)
