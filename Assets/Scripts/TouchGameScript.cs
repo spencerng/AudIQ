@@ -4,29 +4,41 @@ using UnityEngine;
 public class TouchGameScript : MonoBehaviour
 {
     private readonly int numTouches;
-    private AudioPlayer player;
+    private AudioPlayer player, samplePlayer;
+    private AudioSource audio;
     private float localizationFactor, pitchFactor;
     private bool lockTouch;
     private Transform locationMarkerTransform;
     private SpriteRenderer locationMarkerSR;
 
+    private float startTime;
+
+    private float sampleOffsetAngle, samplePitch;
+
     // Start is called before the first frame update
     private void Start()
     {
-
-
-        PlaySampleAudio();
+        AudioSource audio = GameObject.Find("AudioManager").GetComponent<AudioSource>();
+        ResetGame();
+        
 
         locationMarkerTransform = GameObject.Find("LocationMarker").GetComponent<Transform>();
         locationMarkerSR = GameObject.Find("LocationMarker").GetComponent<SpriteRenderer>();
 
-        localizationFactor = 0f;
-        pitchFactor = 1f;
+    }
+
+    void ResetGame()
+    {
+        player = new AudioPlayer(audio);
+        sampleOffsetAngle = Random.Range(-90f, 90f);
+        samplePitch = Random.Range(0.5f, 2.0f);
+        PlaySampleAudio();
+        
     }
 
     public void ScoreSelection()
     {
-
+        float timeDelta = Time.time - startTime;
     }
 
     public void PlaySampleAudio()
@@ -37,14 +49,14 @@ public class TouchGameScript : MonoBehaviour
 
     public IEnumerator PlaySampleAudioRoutine()
     {
-        AudioSource audio = GameObject.Find("AudioManager").GetComponent<AudioSource>();
-        player = new AudioPlayer(audio);
-        player.Play();
+        samplePlayer = new AudioPlayer(audio, sampleOffsetAngle, samplePitch);
+        samplePlayer.Play();
         yield return new WaitForSeconds(5.0f);
-        player.Stop();
+        samplePlayer.Stop();
         yield return new WaitForSeconds(3.0f);
         player.Play();
         lockTouch = false;
+        startTime = Time.time;
     }
 
     // Update is called once per frame
