@@ -112,11 +112,12 @@ public class AudioPlayer
 
     public void Stop()
     {
+        Debug.Log("Stopped");
         leftSource.Stop();
         rightSource.Stop();
         leftSource.time = 0.0f;
         rightSource.time = 0.0f;
-        CreateITD(itd, !isTowardsLeft);
+        //CreateITD(itd, !isTowardsLeft);
     }
 
     // Sets the pitch based on Unity's AudioMixer pitch shifter effect

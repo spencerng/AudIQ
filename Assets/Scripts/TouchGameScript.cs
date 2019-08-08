@@ -6,7 +6,7 @@ public class TouchGameScript : MonoBehaviour
 {
     private readonly int numTouches;
     private AudioPlayer player, samplePlayer;
-    private readonly AudioSource audio;
+    private AudioSource audio;
     private float localizationFactor, pitchFactor;
     private bool lockTouch;
     private Transform locationMarkerTransform;
@@ -19,7 +19,7 @@ public class TouchGameScript : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        AudioSource audio = GameObject.Find("AudioManager").GetComponent<AudioSource>();
+        audio = GameObject.Find("AudioManager").GetComponent<AudioSource>();
         ResetGame();
 
         Button playSample = GameObject.Find("PlaySample").GetComponent<Button>();
@@ -33,8 +33,6 @@ public class TouchGameScript : MonoBehaviour
 
         playSample.GetComponent<RectTransform>().position = new Vector3(Screen.width * (1.5f / 6), Screen.height * 100f / 1053, 0);
         confirm.GetComponent<RectTransform>().position = new Vector3(Screen.width * 4.5f / 6, Screen.height * 100f / 1053, 0);
-
-        PlaySampleAudio();
 
 
         locationMarkerTransform = GameObject.Find("LocationMarker").GetComponent<Transform>();
@@ -66,6 +64,7 @@ public class TouchGameScript : MonoBehaviour
     {
         samplePlayer = new AudioPlayer(audio, sampleOffsetAngle, samplePitch);
         samplePlayer.Play();
+        
         yield return new WaitForSeconds(5.0f);
         samplePlayer.Stop();
         yield return new WaitForSeconds(3.0f);
