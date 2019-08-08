@@ -62,9 +62,9 @@ public class TouchGameScript : MonoBehaviour
 
     public IEnumerator PlaySampleAudioRoutine()
     {
+        player.Stop();
         samplePlayer = new AudioPlayer(audio, sampleOffsetAngle, samplePitch);
         samplePlayer.Play();
-        
         yield return new WaitForSeconds(5.0f);
         samplePlayer.Stop();
         yield return new WaitForSeconds(3.0f);
@@ -95,16 +95,7 @@ public class TouchGameScript : MonoBehaviour
                 else if (localizationFactor < -90)
                     localizationFactor = -90;
 
-                //Question: Do we care about the angle, or is a binary 90/-90 for the angle OK?
-                /*
-				float localizationFactor = latestTouch.deltaPosition.x;
-				if (localizationFactor > 0)
-					localizationFactor = 90;
-				else if (localizationFactor == 0)
-					localizationFactor = 0;
-				else if (localizationFactor < 0)
-					localizationFactor = -90;
-				*/
+
 
                 if (Mathf.Abs(localizationFactor) > 5)
                     player.SetOffsetAngle(-localizationFactor);
@@ -122,12 +113,13 @@ public class TouchGameScript : MonoBehaviour
 
                 if (Mathf.Abs(pitchFactor) > 0.05f)
                     player.SetPitch(pitchFactor);
-
-
-                Debug.Log(latestTouch.position);
+                
 
             }
         }
+
+        Debug.Log(pitchFactor + " " + -localizationFactor);
+        
 
         UIHelper.OnBackButtonClickListener("MainMenu");
 
