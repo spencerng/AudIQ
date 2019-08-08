@@ -12,14 +12,25 @@ public class TouchGameScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        lockTouch = true;
-        StartCoroutine(PlayStartingAudio());
+        
+        PlaySampleAudio();
 
         localizationFactor = 0f;
         pitchFactor = 1f;
     }
 
-    private IEnumerator PlayStartingAudio()
+    public void ScoreSelection()
+    {
+
+    }
+
+    public void PlaySampleAudio()
+    {
+        lockTouch = true;
+        StartCoroutine(PlaySampleAudioRoutine());
+    }
+
+    public IEnumerator PlaySampleAudioRoutine()
     {
         AudioSource audio = GameObject.Find("AudioManager").GetComponent<AudioSource>();
         player = new AudioPlayer(audio);
