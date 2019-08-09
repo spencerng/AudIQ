@@ -1,13 +1,10 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
-
 /*TO DO:
- * FIX SCREEN SCALING TO EXCLUDE THE ~TOP 1/5 OF THE SCREEN (SCORE COUNTER)
- * UIHELPER DOESN'T FLASH CORRECT/INCORRECT, FIX
- * ADD FUNCTIONALITY FOR THE PLAY SAMPLE BUTTON
+ * ENABLE FUNCTIONALITY FOR N (FOR NOW 5) TRIALS; GO TO NEXT TRIAL ON CORRECT OR ON 60 SECOND TIME LIMIT
+ * LOG DATA CORRECT, INCORRECT, TIME TAKEN, PITCH GUESSED, ACTUAL PITCH, ETC. (MODIFY AUDIOPLAYER? CREATE NEW OBJ? UPDATE DATABASE?)
  * */
-
 public class TouchGameScript : MonoBehaviour
 {
     private readonly int numTouches;
@@ -52,11 +49,15 @@ public class TouchGameScript : MonoBehaviour
     private void ResetGame()
     {
         player = new AudioPlayer(audio);
-        sampleOffsetAngle = 0; // Random.Range(-90f, 90f);
-        samplePitch = 1; // Random.Range(0.5f, 2.0f);
-        //StartCoroutine(PlaySampleAudioRoutine());
+        sampleOffsetAngle = Random.Range(-90f, 90f);
+        samplePitch = Random.Range(0.5f, 2.0f);
+        StartCoroutine(PlaySampleAudioRoutine());
     }
 
+    public void PlaySampleAudio() //Attached to Play Sample Button
+    {
+        PlaySampleAudioRoutine();
+    }
     public IEnumerator PlaySampleAudioRoutine()
     {
         lockTouch = true;
@@ -88,19 +89,19 @@ public class TouchGameScript : MonoBehaviour
             //Input formula here
             score += (30 - Mathf.Abs(localizationFactor - sampleOffsetAngle)) + (20 * 1 - Mathf.Abs(pitchFactor - samplePitch)) + timeScore;
             GameObject.Find("Score").GetComponent<Text>().text = "Score: " + score;
-            UIHelper.FlashCorrectIncorrectScreen(true);
+            StartCoroutine(UIHelper.FlashCorrectIncorrectScreen(true));
 
         }
         else
         {
-            UIHelper.FlashCorrectIncorrectScreen(false);
+            StartCoroutine(UIHelper.FlashCorrectIncorrectScreen(false));
         }
     }
 
     // Update is called once per frame
     private void Update()
     {
-        if ((Input.touchCount > 0 && !lockTouch) && (Input.GetTouch(Input.touchCount - 1).position.y > Screen.height * 150f / 1000))
+        if ((Input.touchCount > 0 && !lockTouch) && (Input.GetTouch(Input.touchCount - 1).position.y > Screen.height * 150f / 1000) && (Input.GetTouch(Input.touchCount - 1).position.y < Screen.height * 850f / 1000))
         {
             Touch latestTouch = Input.GetTouch(Input.touchCount - 1);
             if (latestTouch.phase == TouchPhase.Moved)
@@ -125,7 +126,7 @@ public class TouchGameScript : MonoBehaviour
 
 
                 //Question: How much should moving the finger across the screen alter the touch (ie, how big is the pitch range we're trying to test?)
-                float registeredScreenHeight = Screen.height * 850f / 1000;
+                float registeredScreenHeight = Screen.height * 700f / 1000;
                 float modifiedYPosition = latestTouch.position.y - (Screen.height * 150f / 1000);
 
                 if (modifiedYPosition < registeredScreenHeight / 2)
@@ -146,10 +147,7 @@ public class TouchGameScript : MonoBehaviour
                 if (Mathf.Abs(pitchFactor) > 0.05f)
                     player.SetPitch(pitchFactor);
             }
-        }
-
-        //Debug.Log(pitchFactor + " " + -localizationFactor);
-        
+        }        
 
         UIHelper.OnBackButtonClickListener("MainMenu");
 
