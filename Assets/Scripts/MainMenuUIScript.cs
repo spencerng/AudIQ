@@ -5,24 +5,16 @@ using UnityEngine.UI;
 
 public class MainMenuUIScript : MonoBehaviour
 {
-    private AudioPlayer player;
-
     public void Start()
     {
         Screen.orientation = ScreenOrientation.Portrait;
 
-        player = new AudioPlayer(GameObject.Find("AudioManager").GetComponent<AudioSource>(), 0.0f, 1.0f);
-        player.Play();
     }
 
     public void Update()
     {
         Slider slider = GameObject.Find("Slider").GetComponent<Slider>();
-        player.SetOffsetAngle(-slider.value);
-
         Slider sliderPitch = GameObject.Find("Slider (1)").GetComponent<Slider>();
-        player.SetPitch(sliderPitch.value);
-
     }
 
     public void StartSpeechInNoiseGame()

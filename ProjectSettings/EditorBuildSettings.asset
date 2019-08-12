@@ -23,4 +23,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TouchGame.unity
     guid: 5a8fcb6c1889aee4c9fc4d3ccfe773ce
+  - enabled: 1
+    path: Assets/Scenes/NewAccount.unity
+    guid: 33203f9748b58604385e9fd6b065592f
   m_configObjects: {}

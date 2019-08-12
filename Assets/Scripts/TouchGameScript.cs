@@ -28,17 +28,24 @@ public class TouchGameScript : MonoBehaviour
 
         Button playSample = GameObject.Find("PlaySample").GetComponent<Button>();
         Button confirm = GameObject.Find("Confirm").GetComponent<Button>();
+        Text scoreText = GameObject.Find("Score").GetComponent<Text>();
+        Text timeRemaining = GameObject.Find("TimeRemaining").GetComponent<Text>();
 
         //Set UI
         playSample.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Screen.height * (125f / 1000));
         confirm.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Screen.height * (125f / 1000));
+        scoreText.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Screen.height * (125f / 1000));
+        timeRemaining.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Screen.height * (125f / 1000));
 
         playSample.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Screen.width * (250f / 600));
         confirm.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Screen.width * (250f / 600));
+        scoreText.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Screen.width * (250f / 600));
+        timeRemaining.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Screen.width * (250f / 600));
 
         playSample.GetComponent<RectTransform>().position = new Vector3(Screen.width * (1.5f / 6), Screen.height * 100f / 1000, 0);
         confirm.GetComponent<RectTransform>().position = new Vector3(Screen.width * 4.5f / 6, Screen.height * 100f / 1000, 0);
-
+        scoreText.GetComponent<RectTransform>().position = new Vector3(Screen.width * (1.5f / 6), Screen.height * 900f / 1000, 0);
+        timeRemaining.GetComponent<RectTransform>().position = new Vector3(Screen.width * (4.5f / 6), Screen.height * 900f / 1000, 0);
 
         locationMarkerTransform = GameObject.Find("LocationMarker").GetComponent<Transform>();
         locationMarkerSR = GameObject.Find("LocationMarker").GetComponent<SpriteRenderer>();
