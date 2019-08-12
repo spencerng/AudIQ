@@ -129,7 +129,8 @@ public class TouchGameScript : MonoBehaviour
             Touch latestTouch = Input.GetTouch(Input.touchCount - 1);
             if (latestTouch.phase == TouchPhase.Moved)
             {
-                locationMarkerTransform.position = latestTouch.position;
+                Camera camera = GameObject.Find("Main Camera").GetComponent<Camera>();
+                locationMarkerTransform.position = camera.ScreenToWorldPoint(new Vector3(latestTouch.position.x, latestTouch.position.y, camera.nearClipPlane));
 
                 localizationFactor = (Screen.width /2 - latestTouch.position.x) * 90 / (Screen.width / 2); //Changes location like a slider
                 if (localizationFactor > 90)
