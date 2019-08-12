@@ -2,7 +2,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 /*TO DO:
- * ENABLE FUNCTIONALITY FOR N (FOR NOW 5) TRIALS; GO TO NEXT TRIAL ON CORRECT OR ON 60 SECOND TIME LIMIT
  * LOG DATA CORRECT, INCORRECT, TIME TAKEN, PITCH GUESSED, ACTUAL PITCH, ETC. (MODIFY AUDIOPLAYER? CREATE NEW OBJ? UPDATE DATABASE?)
  * */
 public class TouchGameScript : MonoBehaviour
@@ -11,21 +10,21 @@ public class TouchGameScript : MonoBehaviour
     private AudioPlayer player, samplePlayer;
     private AudioSource audio;
     private float localizationFactor, pitchFactor;
-    private bool lockTouch;
+    private bool lockTouch, istimeLimitReached, isFirstSamplePlaying;
     private Transform locationMarkerTransform;
     private SpriteRenderer locationMarkerSR;
 
-    private float startTime;
+    private float startTime, sampleOffsetAngle, samplePitch, score, maxTime;
 
-    private float sampleOffsetAngle, samplePitch;
-
-    private float score;
+    private int numTrials, maxTrials;
 
     // Start is called before the first frame update
     private void Start()
     {
+        numTrials = 0; maxTrials = 3; maxTime = 60f;
         audio = GameObject.Find("AudioManager").GetComponent<AudioSource>();
-        ResetGame();
+        player = new AudioPlayer(audio);
+        samplePlayer = new AudioPlayer(audio, sampleOffsetAngle, samplePitch); //moved up here
 
         Button playSample = GameObject.Find("PlaySample").GetComponent<Button>();
         Button confirm = GameObject.Find("Confirm").GetComponent<Button>();
@@ -44,38 +43,47 @@ public class TouchGameScript : MonoBehaviour
         locationMarkerTransform = GameObject.Find("LocationMarker").GetComponent<Transform>();
         locationMarkerSR = GameObject.Find("LocationMarker").GetComponent<SpriteRenderer>();
 
+        locationMarkerSR.sprite = Resources.Load("chicky", typeof(Sprite)) as Sprite;
+
+        StartNewTrial();
     }
 
-    private void ResetGame()
+    private void StartNewTrial()
     {
-        player = new AudioPlayer(audio);
-        sampleOffsetAngle = Random.Range(-90f, 90f);
-        samplePitch = Random.Range(0.5f, 2.0f);
-        samplePlayer = new AudioPlayer(audio, sampleOffsetAngle, samplePitch); //moved up here
-        StartCoroutine(PlaySampleAudioRoutine());
+        if (numTrials < maxTrials)
+        {
+            numTrials++;
+            sampleOffsetAngle = Random.Range(-90f, 90f);
+            samplePitch = Random.Range(0.5f, 2.0f);
+            samplePlayer.SetOffsetAngle(sampleOffsetAngle);
+            samplePlayer.SetPitch(samplePitch);
+            startTime = Time.time; //Time it takes for original sample to play
+            istimeLimitReached = false;
+            StartCoroutine(PlaySampleAudioRoutine());
+        }
     }
 
     public void PlaySampleAudio() //Attached to Play Sample Button
     {
-        StartCoroutine(PlaySampleAudioRoutine());
+        if (maxTime - (Time.time - startTime) > 8f && !isFirstSamplePlaying)
+            StartCoroutine(PlaySampleAudioRoutine());
     }
     public IEnumerator PlaySampleAudioRoutine()
     {
         lockTouch = true;
+        isFirstSamplePlaying = true;
         player.Stop();
-        //samplePlayer = new AudioPlayer(audio, sampleOffsetAngle, samplePitch);
         samplePlayer.Play();
         yield return new WaitForSeconds(5.0f);
         samplePlayer.Stop();
-        yield return new WaitForSeconds(3.0f);
+        yield return new WaitForSeconds(1.0f);
         player.Play();
         lockTouch = false;
-        startTime = Time.time;
+        isFirstSamplePlaying = false;
     }
 
     public void CheckValidity() //Attached to the Confirm Button
     {
-        Debug.Log("Pressed");
         if ((Mathf.Abs(sampleOffsetAngle - localizationFactor) < 30f) && (Mathf.Abs(samplePitch - pitchFactor) < 0.15))
         {
             player.Stop();
@@ -86,12 +94,12 @@ public class TouchGameScript : MonoBehaviour
             else
                 timeScore = 50 - (Time.time - startTime);
 
-            Debug.Log("Correct");
             //Input formula here
             score += (30 - Mathf.Abs(localizationFactor - sampleOffsetAngle)) + (20 * 1 - Mathf.Abs(pitchFactor - samplePitch)) + timeScore;
-            GameObject.Find("Score").GetComponent<Text>().text = "Score: " + score;
+            GameObject.Find("Score").GetComponent<Text>().text = "Score: " + (int)score;
             StartCoroutine(UIHelper.FlashCorrectIncorrectScreen(true));
 
+            StartNewTrial();
         }
         else
         {
@@ -107,14 +115,8 @@ public class TouchGameScript : MonoBehaviour
             Touch latestTouch = Input.GetTouch(Input.touchCount - 1);
             if (latestTouch.phase == TouchPhase.Moved)
             {
-                locationMarkerSR.sprite = Resources.Load("chicky", typeof(Sprite)) as Sprite;
                 locationMarkerTransform.position = latestTouch.position;
 
-
-                //Question: Should people be able to change both pitch and localization at once, or one at a time? I did one at a time
-
-
-                //If we want to slowly change through multiple touches:
                 localizationFactor = (Screen.width /2 - latestTouch.position.x) * 90 / (Screen.width / 2); //Changes location like a slider
                 if (localizationFactor > 90)
                     localizationFactor = 90;
@@ -122,11 +124,8 @@ public class TouchGameScript : MonoBehaviour
                     localizationFactor = -90;
 
                 if (Mathf.Abs(localizationFactor) > 5)
-                    player.SetOffsetAngle(-localizationFactor);
+                    player.SetOffsetAngle(localizationFactor);
 
-
-
-                //Question: How much should moving the finger across the screen alter the touch (ie, how big is the pitch range we're trying to test?)
                 float registeredScreenHeight = Screen.height * 700f / 1000;
                 float modifiedYPosition = latestTouch.position.y - (Screen.height * 150f / 1000);
 
@@ -139,7 +138,6 @@ public class TouchGameScript : MonoBehaviour
                     pitchFactor = 1f + ((modifiedYPosition - registeredScreenHeight / 2f) / (registeredScreenHeight / 2f));
                 }
 
-                //1.1 is for attenuation; will probably need algorithm for proper attenuation
                 if (pitchFactor < 0.5f) //song starts playing backwards
                     pitchFactor = 0.5f;
                 if (pitchFactor > 2f)
@@ -148,7 +146,18 @@ public class TouchGameScript : MonoBehaviour
                 if (Mathf.Abs(pitchFactor) > 0.05f)
                     player.SetPitch(pitchFactor);
             }
-        }        
+        }
+
+        //Update Time
+        GameObject.Find("TimeRemaining").GetComponent<Text>().text = "Time Remaining: " + (int)(maxTime - (Time.time - startTime) + 1);
+
+        //Check Time Limit
+        if (Time.time - startTime > maxTime && !istimeLimitReached)
+        {
+            StartCoroutine(UIHelper.FlashCorrectIncorrectScreen(false));
+            istimeLimitReached = true;
+            StartNewTrial();
+        }
 
         UIHelper.OnBackButtonClickListener("MainMenu");
 
