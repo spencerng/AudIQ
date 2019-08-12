@@ -51,18 +51,19 @@ public class TouchGameScript : MonoBehaviour
         player = new AudioPlayer(audio);
         sampleOffsetAngle = Random.Range(-90f, 90f);
         samplePitch = Random.Range(0.5f, 2.0f);
+        samplePlayer = new AudioPlayer(audio, sampleOffsetAngle, samplePitch); //moved up here
         StartCoroutine(PlaySampleAudioRoutine());
     }
 
     public void PlaySampleAudio() //Attached to Play Sample Button
     {
-        PlaySampleAudioRoutine();
+        StartCoroutine(PlaySampleAudioRoutine());
     }
     public IEnumerator PlaySampleAudioRoutine()
     {
         lockTouch = true;
         player.Stop();
-        samplePlayer = new AudioPlayer(audio, sampleOffsetAngle, samplePitch);
+        //samplePlayer = new AudioPlayer(audio, sampleOffsetAngle, samplePitch);
         samplePlayer.Play();
         yield return new WaitForSeconds(5.0f);
         samplePlayer.Stop();
