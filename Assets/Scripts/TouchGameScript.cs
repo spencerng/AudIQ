@@ -51,8 +51,15 @@ public class TouchGameScript : MonoBehaviour
         locationMarkerSR = GameObject.Find("LocationMarker").GetComponent<SpriteRenderer>();
 
         locationMarkerSR.sprite = Resources.Load("chicky", typeof(Sprite)) as Sprite;
+        
+        RectTransform locationMarkerRectTransform = locationMarkerSR.GetComponent<RectTransform>();
 
+        locationMarkerRectTransform.anchorMin = new Vector2(0, 0);
+        locationMarkerRectTransform.anchorMax = new Vector2(0, 0);
+        locationMarkerRectTransform.pivot = new Vector2(0, 0);
+        
         StartNewTrial();
+        
     }
 
     private void StartNewTrial()
