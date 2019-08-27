@@ -5,16 +5,28 @@ using UnityEngine.UI;
 
 public class MainMenuUIScript : MonoBehaviour
 {
+    private TargetBeaconPlayer player;
+
     public void Start()
     {
         Screen.orientation = ScreenOrientation.Portrait;
-
+        AudioTest();
     }
 
     public void Update()
     {
-        Slider slider = GameObject.Find("Slider").GetComponent<Slider>();
+        Slider sliderOffsetAngle = GameObject.Find("Slider").GetComponent<Slider>();
         Slider sliderPitch = GameObject.Find("Slider (1)").GetComponent<Slider>();
+
+        player.SetBeaconOffsetAngle(-sliderOffsetAngle.value);
+        player.SetBeaconPitch(sliderPitch.value);
+        Debug.Log(player.GetAbsoluteOffsetAngleDifference() + ", " + player.GetAbsolutePitchDifference());
+    }
+
+    public void AudioTest()
+    {
+        player = GameObject.Find("TargetBeaconManager").GetComponent<TargetBeaconPlayer>();
+        player.Play();
     }
 
     public void StartSpeechInNoiseGame()

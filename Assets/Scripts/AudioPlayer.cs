@@ -148,6 +148,16 @@ public class AudioPlayer
         return offsetAngle;
     }
 
+    public float GetITD()
+    {
+        return itd;
+    }
+
+    public float GetILD()
+    {
+        return ild;
+    }
+
     private AudioSource GetLeftSource()
     {
         AudioSource leftSource = AudioSource.Instantiate(audioSource);
@@ -193,5 +203,6 @@ public class AudioPlayer
     {
         return correctlyAnswered;
     }
+
 
 }
