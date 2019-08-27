@@ -19,6 +19,14 @@ public class TargetBeaconPlayer : MonoBehaviour
         clipLength = audioSource.clip.length;
     }
 
+    public void Reset()
+    {
+        beacon.Reset();
+        target.Reset();
+        target.SetPitch(Random.Range(0.5f, 2.0f));
+        target.SetOffsetAngle(Random.Range(-90.0f, 90.0f));
+    }
+
     public void Play()
     {
         currentlyPlaying = true;
@@ -32,10 +40,11 @@ public class TargetBeaconPlayer : MonoBehaviour
             targetPlaying = true;
             target.Play();
             yield return new WaitForSeconds(clipLength);
+            targetPlaying = false;
             target.Stop();
             yield return new WaitForSeconds(timeDelay);
 
-            targetPlaying = false;
+            
             beacon.Play();
             yield return new WaitForSeconds(clipLength);
             beacon.Stop();

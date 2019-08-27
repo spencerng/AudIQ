@@ -7,7 +7,8 @@ using UnityEngine.UI;
 public class TouchGameScript : MonoBehaviour
 {
     private readonly int numTouches;
-    private AudioPlayer player, samplePlayer;
+    private AudioPlayer samplePlayer;
+    private TargetBeaconPlayer player;
     private AudioSource audio;
     private float localizationFactor, pitchFactor;
     private bool lockTouch, istimeLimitReached, isFirstSamplePlaying;
@@ -23,7 +24,9 @@ public class TouchGameScript : MonoBehaviour
     {
         numTrials = 0; maxTrials = 3; maxTime = 60f;
         audio = GameObject.Find("AudioManager").GetComponent<AudioSource>();
-        player = new AudioPlayer(audio);
+        //player = new AudioPlayer(audio);
+        player = GameObject.Find("TargetBeaconManager").GetComponent<TargetBeaconPlayer>();
+
         samplePlayer = new AudioPlayer(audio, sampleOffsetAngle, samplePitch); //moved up here
 
         Button playSample = GameObject.Find("PlaySample").GetComponent<Button>();
@@ -66,14 +69,13 @@ public class TouchGameScript : MonoBehaviour
     {
         if (numTrials < maxTrials)
         {
+            locationMarkerTransform.position = new Vector3(291, 520);
             numTrials++;
-            sampleOffsetAngle = Random.Range(-90f, 90f);
-            samplePitch = Random.Range(0.5f, 2.0f);
-            samplePlayer.SetOffsetAngle(sampleOffsetAngle);
-            samplePlayer.SetPitch(samplePitch);
+            player.Reset();
+            player.Play();
             startTime = Time.time; //Time it takes for original sample to play
             istimeLimitReached = false;
-            StartCoroutine(PlaySampleAudioRoutine());
+            //StartCoroutine(PlaySampleAudioRoutine());
         }
     }
 
@@ -98,18 +100,22 @@ public class TouchGameScript : MonoBehaviour
 
     public void CheckValidity() //Attached to the Confirm Button
     {
-        if ((Mathf.Abs(sampleOffsetAngle - localizationFactor) < 30f) && (Mathf.Abs(samplePitch - pitchFactor) < 0.15))
+        if (player.GetAbsoluteOffsetAngleDifference() < 30f && player.GetAbsolutePitchDifference() < 0.15)
         {
             player.Stop();
             float timeScore;
 
             if (50 - (Time.time - startTime) < 0)
+            {
                 timeScore = 0;
+            }
             else
+            {
                 timeScore = 50 - (Time.time - startTime);
+            }
 
             //Input formula here
-            score += (30 - Mathf.Abs(localizationFactor - sampleOffsetAngle)) + (20 * 1 - Mathf.Abs(pitchFactor - samplePitch)) + timeScore;
+            score += (30 - player.GetAbsoluteOffsetAngleDifference()) + (20 * 1 - player.GetAbsolutePitchDifference()) + timeScore;
             GameObject.Find("Score").GetComponent<Text>().text = "Score: " + (int)score;
             StartCoroutine(UIHelper.FlashCorrectIncorrectScreen(true));
 
@@ -139,7 +145,7 @@ public class TouchGameScript : MonoBehaviour
                     localizationFactor = -90;
 
                 if (Mathf.Abs(localizationFactor) > 5)
-                    player.SetOffsetAngle(localizationFactor);
+                    player.SetBeaconOffsetAngle(localizationFactor);
 
                 float registeredScreenHeight = Screen.height * 700f / 1000;
                 float modifiedYPosition = latestTouch.position.y - (Screen.height * 150f / 1000);
@@ -159,9 +165,11 @@ public class TouchGameScript : MonoBehaviour
                     pitchFactor = 2f;
 
                 if (Mathf.Abs(pitchFactor) > 0.05f)
-                    player.SetPitch(pitchFactor);
+                    player.SetBeaconPitch(pitchFactor);
             }
         }
+
+        Debug.Log(locationMarkerTransform.position);
 
         //Update Time
         GameObject.Find("TimeRemaining").GetComponent<Text>().text = "Time Remaining: " + (int)(maxTime - (Time.time - startTime) + 1);
