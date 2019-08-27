@@ -21,10 +21,13 @@ public class TargetBeaconPlayer : MonoBehaviour
 
     public void Reset()
     {
-        beacon.Reset();
-        target.Reset();
+        beacon.Stop();
+        target.Stop();
+        
         target.SetPitch(Random.Range(0.5f, 2.0f));
         target.SetOffsetAngle(Random.Range(-90.0f, 90.0f));
+         
+        Play();
     }
 
     public void Play()
@@ -50,11 +53,13 @@ public class TargetBeaconPlayer : MonoBehaviour
             beacon.Stop();
             yield return new WaitForSeconds(timeDelay);
         }
+        
     }
 
     public void Stop()
     {
         currentlyPlaying = false;
+        StopAllCoroutines();
     }
 
     public void SetBeaconOffsetAngle(float offsetAngle)

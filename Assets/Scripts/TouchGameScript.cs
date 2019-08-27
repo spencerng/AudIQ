@@ -72,7 +72,7 @@ public class TouchGameScript : MonoBehaviour
             locationMarkerTransform.position = new Vector3(291, 520);
             numTrials++;
             player.Reset();
-            player.Play();
+           
             startTime = Time.time; //Time it takes for original sample to play
             istimeLimitReached = false;
             //StartCoroutine(PlaySampleAudioRoutine());
