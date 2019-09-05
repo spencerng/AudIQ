@@ -10,7 +10,7 @@ public class TargetBeaconPlayer : MonoBehaviour
     bool currentlyPlaying, targetPlaying;
 
     public AudioSource audioSource;
-    public float timeDelay;
+    public float targetBeaconDelay, cycleDelay;
 
     public void Start()
     {
@@ -45,13 +45,13 @@ public class TargetBeaconPlayer : MonoBehaviour
             yield return new WaitForSeconds(clipLength);
             targetPlaying = false;
             target.Stop();
-            yield return new WaitForSeconds(timeDelay);
+            yield return new WaitForSeconds(targetBeaconDelay);
 
             
             beacon.Play();
             yield return new WaitForSeconds(clipLength);
             beacon.Stop();
-            yield return new WaitForSeconds(timeDelay);
+            yield return new WaitForSeconds(cycleDelay);
         }
         
     }

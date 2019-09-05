@@ -3,7 +3,7 @@ fname = 'bla.wav';%output file name
 Fs = 44.1e3;%sampling frequency in Hz
 fmax = 10e3; %max permitted frequency in the signal in kHz (depends on device, here assumption is that most devices don't play out sound above 10kHz)
 
-totalDuration = 1;%total duration in seconds
+totalDuration = 50e-03;%total duration in seconds
 
 rampDuration = 20e-3;% onset and offset ramps in seconds (20 ms is a good default)
 rampLength = rampDuration * Fs;
@@ -33,7 +33,7 @@ switch which_sound
         pitch = 1000; % pitch in Hz, hard code here (define)
         yraw = sin(2*pi*pitch*t);
     case 5, % harmonic stack
-        pitch = 1000; % pitch in Hz, hard code here (define)
+        pitch = 500; % pitch in Hz, hard code here (define)
         nharmonics = 5;% number of harmonics, hard code here (define), be sure that nharmonics*pitch <= fmax
         yraw = sin(2*pi*pitch*t);
         for nn = 2 : nharmonics
