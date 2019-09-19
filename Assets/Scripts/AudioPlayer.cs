@@ -10,6 +10,7 @@ public class AudioPlayer
     private readonly AudioSource audioSource;
     private AudioSource leftSource, rightSource;
     private readonly AudioClip audioClip;
+    private AudioPlayer bufferPlayer;
 
     private float ild, itd;
     private float offsetAngle;
